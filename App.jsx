@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
 import { BUILT_IN_TESTS, CATEGORIES } from "./questions.js";
-import { BUILT_IN_TESTS_ADJ, ADJ_CATEGORIES } from "./questions_adjektiv.js";
-const ALL_BUILT_IN=[...BUILT_IN_TESTS,...BUILT_IN_TESTS_ADJ];
-const ALL_CATEGORIES=[...CATEGORIES,...ADJ_CATEGORIES];
 
 const ADMIN_PIN = "1234";
 async function load(k){try{const r=await window.storage.get(k);return r?JSON.parse(r.value):null}catch{return null}}
@@ -180,7 +177,7 @@ function CreateTest({existing,onSave,onBack}){
       <div style={{marginBottom:"1rem"}}>
         <label className="lbl">Kategori</label>
         <select className="sel" style={{width:"100%"}} value={cat} onChange={e=>setCat(e.target.value)}>
-          {ALL_CATEGORIES.map(c=><option key={c}>{c}</option>)}
+          {CATEGORIES.map(c=><option key={c}>{c}</option>)}
         </select>
       </div>
       {qs.map((q,i)=>(
@@ -197,7 +194,7 @@ function CreateTest({existing,onSave,onBack}){
 
 // ── ADMIN TESTS ───────────────────────────────────────────────────────────────
 function AdminTests({custom,onEdit,onCreate,onDelete}){
-  const all=[...ALL_BUILT_IN,...custom];
+  const all=[...BUILT_IN_TESTS,...custom];
   return(
     <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"1rem"}}>
@@ -385,41 +382,17 @@ function StudentTests({name,allTests,results,onSelect,onBack}){
   );
 }
 
-// ── GROUP INFO (used by two-stage questions) ──────────────────────────────────
-const GROUP_INFO={
-  "A":{label:"Grupp A",desc:"en, ett, någon/något, ingen/inget/inga, vilken, varje, annan…"},
-  "B":{label:"Grupp B",desc:"den, det, de — den här/där, det här/där, de här/där…"},
-  "C":{label:"Grupp C",desc:"min/mitt/mina, Evas (genitiv), samma, nästa, följande…"},
-  "1":{label:"Grupp 1",desc:"–are, –ast  (de flesta adjektiv: rolig→roligare)"},
-  "2":{label:"Grupp 2",desc:"–re, –st med omljud  (hög, ung, tung, låg, lång, stor, grov)"},
-  "3":{label:"Grupp 3",desc:"oregelbundna  (gammal, liten, bra, dålig)"},
-  "4":{label:"Grupp 4",desc:"mer / mest  (–isk adjektiv, perfekt och presens particip)"},
-};
-
 // ── QUIZ ──────────────────────────────────────────────────────────────────────
 function Quiz({test,onFinish,onBack}){
   const [cur,setCur]=useState(0);
   const [ans,setAns]=useState({});
   const [done,setDone]=useState(false);
   const [saved,setSaved]=useState(false);
-  const [phase,setPhase]=useState(()=>test.questions[0]?.type==="two_stage"?"group":"form");
-  const [groupErr,setGroupErr]=useState(false);
-
   const total=test.questions.length;
   const q=test.questions[cur];
-  const isTwoStage=q?.type==="two_stage";
   const sel=ans[q?.id];
   const keys=Object.keys(q?.options||{});
 
-  useEffect(()=>{
-    setPhase(test.questions[cur]?.type==="two_stage"?"group":"form");
-    setGroupErr(false);
-  },[cur]);
-
-  function pickGroup(val){
-    if(val===q.correctGroup){setPhase("form");setGroupErr(false);}
-    else setGroupErr(true);
-  }
   function pick(k){if(!ans[q.id])setAns(p=>({...p,[q.id]:k}))}
   function next(){cur<total-1?setCur(c=>c+1):setDone(true)}
 
@@ -454,67 +427,15 @@ function Quiz({test,onFinish,onBack}){
     );
   }
 
-  const progBar=(
-    <div>
-      <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:"var(--color-text-secondary)",marginBottom:6}}>
-        <span style={{maxWidth:"70%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{test.title}</span>
-        <span>Fråga {cur+1} av {total}</span>
-      </div>
-      <div className="prog"><div className="prog-fill" style={{width:`${(cur/total)*100}%`}}/></div>
-    </div>
-  );
-
-  // ── STEG 1: Gruppidentifiering ────────────────────────────────────────────
-  if(phase==="group"&&isTwoStage){
-    const groupChoices=q.groupType==="adj_abc"?["A","B","C"]:["1","2","3","4"];
-    return(
-      <div>
-        <button className="back" onClick={onBack}>← Avbryt</button>
-        {progBar}
-        <div className="card" style={{marginBottom:"1rem",textAlign:"center",padding:"1.5rem 1.25rem"}}>
-          <p style={{fontSize:22,fontWeight:500,color:"var(--color-text-primary)",marginBottom:q.context?8:0}}>{q.word}</p>
-          {q.context&&<p style={{fontSize:14,color:"var(--color-text-secondary)",lineHeight:1.6,marginTop:4}}><QText text={q.context}/></p>}
-        </div>
-        <p style={{fontSize:14,color:"var(--color-text-secondary)",marginBottom:".75rem"}}>
-          {q.groupType==="adj_abc"
-            ?"Vilken böjningsgrupp (A, B eller C) gäller för adjektivet?"
-            :"Vilken komparationsgrupp (1–4) tillhör adjektivet?"}
-        </p>
-        {groupErr&&<p style={{fontSize:13,color:"var(--color-text-danger)",marginBottom:".75rem",fontWeight:500}}>Fel grupp – försök igen!</p>}
-        <div style={{display:"flex",flexDirection:"column",gap:8}}>
-          {groupChoices.map(g=>(
-            <button key={g} className="ans" onClick={()=>pickGroup(g)}>
-              <span className="ans-key" style={{minWidth:60,flexShrink:0}}>{GROUP_INFO[g].label}</span>
-              <span style={{fontSize:13,color:"var(--color-text-secondary)"}}>{GROUP_INFO[g].desc}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // ── STEG 2 / Vanlig fråga ─────────────────────────────────────────────────
   return(
     <div>
       <button className="back" onClick={onBack}>← Avbryt</button>
-      {progBar}
-      {isTwoStage&&(
-        <div style={{marginBottom:8}}>
-          <span style={{fontSize:12,padding:"2px 10px",borderRadius:99,background:"var(--color-background-success)",color:"var(--color-text-success)",fontWeight:500}}>
-            {GROUP_INFO[q.correctGroup]?.label} ✓
-          </span>
-        </div>
-      )}
-      <div className="card" style={{marginBottom:"1rem"}}>
-        {isTwoStage
-          ?<>
-            <p style={{fontSize:20,fontWeight:500,color:"var(--color-text-primary)",marginBottom:q.context?8:0}}>{q.word}</p>
-            {q.context&&<p style={{fontSize:14,color:"var(--color-text-secondary)",lineHeight:1.6,marginTop:4}}><QText text={q.context}/></p>}
-          </>
-          :<QText text={q.text}/>
-        }
+      <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:"var(--color-text-secondary)",marginBottom:6}}>
+        <span>{test.title}</span>
+        <span>Fråga {cur+1} av {total}</span>
       </div>
-      {q.stageQ&&<p style={{fontSize:14,color:"var(--color-text-secondary)",marginBottom:".75rem"}}>{q.stageQ}</p>}
+      <div className="prog"><div className="prog-fill" style={{width:`${(cur/total)*100}%`}}/></div>
+      <div className="card" style={{marginBottom:"1rem"}}><QText text={q.text}/></div>
       <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:"1rem"}}>
         {keys.map(k=>{
           let cls="ans";
@@ -543,7 +464,7 @@ export default function App(){
   const [step,setStep]=useState("name");
   const [activeTest,setActiveTest]=useState(null);
 
-  const allTests=[...ALL_BUILT_IN,...custom];
+  const allTests=[...BUILT_IN_TESTS,...custom];
 
   useEffect(()=>{
     (async()=>{
