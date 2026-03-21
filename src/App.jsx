@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { BUILT_IN_TESTS, CATEGORIES } from "./questions.js";
 import { BUILT_IN_TESTS_ADJ, ADJ_CATEGORIES } from "./questions_adjektiv.js";
 import { BUILT_IN_TESTS_VERB, VERB_CATEGORIES } from "./questions_verb.js";
-const ALL_BUILT_IN=[...BUILT_IN_TESTS,...BUILT_IN_TESTS_ADJ,...BUILT_IN_TESTS_VERB];
+import { VERB_BANK_TESTS } from "./questions_verb_bank.js";
+const ALL_BUILT_IN=[...BUILT_IN_TESTS,...BUILT_IN_TESTS_ADJ,...BUILT_IN_TESTS_VERB,...VERB_BANK_TESTS];
 const ALL_CATEGORIES=[...CATEGORIES,...ADJ_CATEGORIES,...VERB_CATEGORIES];
 
 const ADMIN_PIN = "1234";
