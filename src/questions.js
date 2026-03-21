@@ -145,25 +145,25 @@ export const FIC_BLANDAT = [
 export const BUILT_IN_TESTS = [
   {
     id:"fib-konj",
-    title:"FiF B – Konjunktioner (övn. 2)",
+    title:"Konjunktioner, uppgift 1",
     category:"Konjunktioner",
-    source:"FiF B",
+    source:"",
     locked:true,
     questions:FIB_KONJ
   },
   {
     id:"fib-subj",
-    title:"FiF B – Subjunktioner (övn. 5)",
+    title:"Subjunktioner, uppgift 1",
     category:"Subjunktioner",
-    source:"FiF B",
+    source:"",
     locked:true,
     questions:FIB_SUBJ
   },
   {
     id:"fic-blandat",
-    title:"FiF C – Konjunktioner & subjunktioner (övn. 3)",
+    title:"Konjunktioner & subjunktioner, uppgift 2",
     category:"Blandat",
-    source:"FiF C",
+    source:"",
     locked:true,
     questions:FIC_BLANDAT
   },
