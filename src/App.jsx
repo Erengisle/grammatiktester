@@ -542,7 +542,7 @@ function Quiz({test,onFinish,onBack}){
         <button className="back" onClick={onBack}>← Avbryt</button>
         {progBar}
         <div className="card" style={{marginBottom:"1rem",textAlign:"center",padding:"1.5rem 1.25rem"}}>
-          <p style={{fontSize:11,fontWeight:500,color:"var(--color-text-secondary)",textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>Imperativ</p>
+          {isVerbGroup&&<p style={{fontSize:11,fontWeight:500,color:"var(--color-text-secondary)",textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>Imperativ</p>}
           <p style={{fontSize:26,fontWeight:500,color:"var(--color-text-primary)"}}>{q.word}!</p>
         </div>
         {isVerbGroup&&cur===0&&<VerbTable/>}
