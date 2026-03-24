@@ -1,144 +1,73 @@
-// Tvåstegsformat: stage 1 = identifiera grupp, stage 2 = välj rätt form
-// Grupp A: en, ett, någon/något/några, ingen/inget/inga, annan/annat/andra, varje, varenda, vilken/vilket/vilka, sådan/sådant/sådana
-// Grupp B: den, det, de / den här, det här, de här / den där, det där, de där
-// Grupp C: min/mitt/mina, din/ditt/dina, hans/hennes/deras, Evas (genitiv), denna/detta/dessa, samma, nästa, följande
+// Tvåstegsformat: stage 1 = identifiera grupp, stage 2 = välj rätt adjektivform
+// word = adjektivet (visas stort)
+// context = hela frasen med ___ som blank (t.ex. "en ___ bil")
+// Grupp A: en/ett/några/ingen/vilket/varje/sådan osv + OBESTÄMD form
+// Grupp B: den/det/de (här/där) + BESTÄMD form
+// Grupp C: min/mitt/mina, Evas (genitiv), samma/nästa/följande + BESTÄMD form
 
 export const ADJ_GROUP_ABC = [
-  {
-    id:"adjg01", type:"two_stage",
-    word:"ledig – arbete",
-    context:"Det finns inga ___ nu, så jag måste stämpla ett tag.",
-    groupType:"adj_abc", correctGroup:"A",
-    stageQ:"Välj rätt form av adjektiv och substantiv:",
-    options:{A:"lediga arbeten",B:"ledigts arbete",C:"ledigt arbeten",D:"ledigna arbeten"},
-    correct:"A"
-  },
-  {
-    id:"adjg02", type:"two_stage",
-    word:"hög – hus",
-    context:"– Vilket hus bor du i? – I det ___ där borta.",
-    groupType:"adj_abc", correctGroup:"B",
-    stageQ:"Välj rätt form:",
-    options:{A:"hög huset",B:"högt huset",C:"höga huset",D:"höge huset"},
-    correct:"C"
-  },
-  {
-    id:"adjg03", type:"two_stage",
-    word:"ny – bil",
-    context:"Deras ___ är röd.",
-    groupType:"adj_abc", correctGroup:"C",
-    stageQ:"Välj rätt form av adjektivet (adjektiv + substantiv):",
-    options:{A:"ny bil",B:"nytt bil",C:"nya bil",D:"nye bil"},
-    correct:"C"
-  },
-  {
-    id:"adjg04", type:"two_stage",
-    word:"snygg – jacka",
-    context:"Vilken ___!",
-    groupType:"adj_abc", correctGroup:"A",
-    stageQ:"Välj rätt form:",
-    options:{A:"snygg jacka",B:"snyggt jacka",C:"snygga jacka",D:"snygge jacka"},
-    correct:"A"
-  },
-  {
-    id:"adjg05", type:"two_stage",
-    word:"gammal – bok",
-    context:"Den ___ kostar mycket.",
-    groupType:"adj_abc", correctGroup:"B",
-    stageQ:"Välj rätt form:",
-    options:{A:"gammal boken",B:"gammalt boken",C:"gamla boken",D:"gammals boken"},
-    correct:"C"
-  },
-  {
-    id:"adjg06", type:"two_stage",
-    word:"liten – hund",
-    context:"Min ___ är söt.",
-    groupType:"adj_abc", correctGroup:"C",
-    stageQ:"Välj rätt form av adjektivet:",
-    options:{A:"liten hund",B:"litet hund",C:"lilla hund",D:"lite hund"},
-    correct:"C"
-  },
-  {
-    id:"adjg07", type:"two_stage",
-    word:"ny – dag",
-    context:"Varje ___ är annorlunda.",
-    groupType:"adj_abc", correctGroup:"A",
-    stageQ:"Välj rätt form:",
-    options:{A:"ny dag",B:"nytt dag",C:"nya dag",D:"nye dag"},
-    correct:"A"
-  },
-  {
-    id:"adjg08", type:"two_stage",
-    word:"stor – träd",
-    context:"De ___ är höga.",
-    groupType:"adj_abc", correctGroup:"B",
-    stageQ:"Välj rätt form:",
-    options:{A:"stor träden",B:"stort träden",C:"stora träden",D:"store träden"},
-    correct:"C"
-  },
-  {
-    id:"adjg09", type:"two_stage",
-    word:"gammal – regel",
-    context:"Samma ___ gäller alltid.",
-    groupType:"adj_abc", correctGroup:"C",
-    stageQ:"Välj rätt form:",
-    options:{A:"gammal regler",B:"gammalt regler",C:"gamla regler",D:"gammals regler"},
-    correct:"C"
-  },
-  {
-    id:"adjg10", type:"two_stage",
-    word:"rolig – program",
-    context:"Det finns inget ___ på TV ikväll.",
-    groupType:"adj_abc", correctGroup:"A",
-    stageQ:"Välj rätt form (inget = ett-ord):",
-    options:{A:"rolig program",B:"roligt program",C:"roliga program",D:"roligs program"},
-    correct:"B"
-  },
-  {
-    id:"adjg11", type:"two_stage",
-    word:"stor – problem",
-    context:"Det här ___ är svårt.",
-    groupType:"adj_abc", correctGroup:"B",
-    stageQ:"Välj rätt form:",
-    options:{A:"stor problemet",B:"stort problemet",C:"stora problemet",D:"store problemet"},
-    correct:"C"
-  },
-  {
-    id:"adjg12", type:"two_stage",
-    word:"lång – semester",
-    context:"Nästa ___ ska jag resa.",
-    groupType:"adj_abc", correctGroup:"C",
-    stageQ:"Välj rätt form av adjektivet (semester = ett-ord):",
-    options:{A:"lång semester",B:"långt semester",C:"långa semester",D:"länge semester"},
-    correct:"C"
-  },
-  {
-    id:"adjg13", type:"two_stage",
-    word:"intressant – projekt",
-    context:"Jag hoppas på något ___.",
-    groupType:"adj_abc", correctGroup:"A",
-    stageQ:"Välj rätt form (något = ett-ord):",
-    options:{A:"intressant projekt",B:"intressants projekt",C:"intressanta projekt",D:"intressante projekt"},
-    correct:"A"
-  },
-  {
-    id:"adjg14", type:"two_stage",
-    word:"ny – kläder",
-    context:"De där ___ är dyra.",
-    groupType:"adj_abc", correctGroup:"B",
-    stageQ:"Välj rätt form:",
-    options:{A:"ny kläderna",B:"nytt kläderna",C:"nya kläderna",D:"nye kläderna"},
-    correct:"C"
-  },
-  {
-    id:"adjg15", type:"two_stage",
-    word:"gammal – hus",
-    context:"Hennes ___ är stort.",
-    groupType:"adj_abc", correctGroup:"C",
-    stageQ:"Välj rätt form av adjektivet (hus = ett-ord):",
-    options:{A:"gammal hus",B:"gammalt hus",C:"gamla hus",D:"gammals hus"},
-    correct:"C"
-  },
+  // ── GRUPP A ──────────────────────────────────────────────────────────────
+  {id:"adjg01",type:"two_stage",word:"fin",context:"en ___ bil",
+   groupType:"adj_abc",correctGroup:"A",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"fin",B:"fint",C:"fina",D:"fine"},correct:"A"},
+
+  {id:"adjg02",type:"two_stage",word:"fin",context:"ett ___ hus",
+   groupType:"adj_abc",correctGroup:"A",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"fin",B:"fint",C:"fina",D:"fine"},correct:"B"},
+
+  {id:"adjg03",type:"two_stage",word:"rolig",context:"några ___ filmer",
+   groupType:"adj_abc",correctGroup:"A",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"rolig",B:"roligt",C:"roliga",D:"rolige"},correct:"C"},
+
+  {id:"adjg04",type:"two_stage",word:"gammal",context:"ingen ___ man",
+   groupType:"adj_abc",correctGroup:"A",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"gammal",B:"gammalt",C:"gamla",D:"gammel"},correct:"A"},
+
+  {id:"adjg05",type:"two_stage",word:"ny",context:"vilket ___ jobb",
+   groupType:"adj_abc",correctGroup:"A",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"ny",B:"nytt",C:"nya",D:"nye"},correct:"B"},
+
+  // ── GRUPP B ──────────────────────────────────────────────────────────────
+  {id:"adjg06",type:"two_stage",word:"fin",context:"den ___ bilen",
+   groupType:"adj_abc",correctGroup:"B",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"fin",B:"fint",C:"fina",D:"fine"},correct:"C"},
+
+  {id:"adjg07",type:"two_stage",word:"stor",context:"det ___ huset",
+   groupType:"adj_abc",correctGroup:"B",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"stor",B:"stort",C:"stora",D:"store"},correct:"C"},
+
+  {id:"adjg08",type:"two_stage",word:"ny",context:"de ___ kläderna",
+   groupType:"adj_abc",correctGroup:"B",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"ny",B:"nytt",C:"nya",D:"nye"},correct:"C"},
+
+  {id:"adjg09",type:"two_stage",word:"gammal",context:"den här ___ boken",
+   groupType:"adj_abc",correctGroup:"B",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"gammal",B:"gammalt",C:"gamla",D:"gammel"},correct:"C"},
+
+  {id:"adjg10",type:"two_stage",word:"liten",context:"det där ___ barnet",
+   groupType:"adj_abc",correctGroup:"B",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"liten",B:"litet",C:"lilla",D:"lite"},correct:"C"},
+
+  // ── GRUPP C ──────────────────────────────────────────────────────────────
+  {id:"adjg11",type:"two_stage",word:"fin",context:"min ___ bil",
+   groupType:"adj_abc",correctGroup:"C",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"fin",B:"fint",C:"fina",D:"fine"},correct:"C"},
+
+  {id:"adjg12",type:"two_stage",word:"rolig",context:"mitt ___ jobb",
+   groupType:"adj_abc",correctGroup:"C",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"rolig",B:"roligt",C:"roliga",D:"rolige"},correct:"C"},
+
+  {id:"adjg13",type:"two_stage",word:"gammal",context:"Evas ___ cykel",
+   groupType:"adj_abc",correctGroup:"C",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"gammal",B:"gammalt",C:"gamla",D:"gammel"},correct:"C"},
+
+  {id:"adjg14",type:"two_stage",word:"lång",context:"nästa ___ semester",
+   groupType:"adj_abc",correctGroup:"C",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"lång",B:"långt",C:"långa",D:"länge"},correct:"C"},
+
+  {id:"adjg15",type:"two_stage",word:"ny",context:"samma ___ regler",
+   groupType:"adj_abc",correctGroup:"C",stageQ:"Välj rätt form av adjektivet:",
+   options:{A:"ny",B:"nytt",C:"nya",D:"nye"},correct:"C"},
 ];
 
 // Komparationsgrupper:

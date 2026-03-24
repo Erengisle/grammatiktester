@@ -543,7 +543,8 @@ function Quiz({test,onFinish,onBack}){
         {progBar}
         <div className="card" style={{marginBottom:"1rem",textAlign:"center",padding:"1.5rem 1.25rem"}}>
           {isVerbGroup&&<p style={{fontSize:11,fontWeight:500,color:"var(--color-text-secondary)",textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>Imperativ</p>}
-          <p style={{fontSize:26,fontWeight:500,color:"var(--color-text-primary)"}}>{q.word}!</p>
+          <p style={{fontSize:26,fontWeight:500,color:"var(--color-text-primary)"}}>{isVerbGroup?`${q.word}!`:q.word}</p>
+          {q.context&&<p style={{fontSize:16,color:"var(--color-text-secondary)",marginTop:8,lineHeight:1.6}}><QText text={q.context}/></p>}
         </div>
         {isVerbGroup&&cur===0&&<VerbTable/>}
         {isVerbGroup&&cur>0&&(
@@ -554,7 +555,7 @@ function Quiz({test,onFinish,onBack}){
         {!isVerbGroup&&(
           <p style={{fontSize:14,color:"var(--color-text-secondary)",marginBottom:".75rem"}}>
             {q.groupType==="adj_abc"
-              ?"Vilken böjningsgrupp (A, B eller C) gäller för adjektivet?"
+              ?"Vilken böjningsgrupp (A, B eller C) gäller för adjektivet i frasen?"
               :"Vilken komparationsgrupp (1–4) tillhör adjektivet?"}
           </p>
         )}
