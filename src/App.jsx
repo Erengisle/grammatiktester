@@ -3,10 +3,11 @@ import { BUILT_IN_TESTS, CATEGORIES } from "./questions.js";
 import { BUILT_IN_TESTS_ADJ, ADJ_CATEGORIES } from "./questions_adjektiv.js";
 import { BUILT_IN_TESTS_VERB, VERB_CATEGORIES } from "./questions_verb.js";
 import { VERB_BANK_TESTS } from "./questions_verb_bank.js";
-const ALL_BUILT_IN=[...BUILT_IN_TESTS,...BUILT_IN_TESTS_ADJ,...BUILT_IN_TESTS_VERB,...VERB_BANK_TESTS];
+import { ADJ_BANK_TESTS } from "./questions_adj_bank.js";
+const ALL_BUILT_IN=[...BUILT_IN_TESTS,...BUILT_IN_TESTS_ADJ,...BUILT_IN_TESTS_VERB,...VERB_BANK_TESTS,...ADJ_BANK_TESTS];
 const ALL_CATEGORIES=[...CATEGORIES,...ADJ_CATEGORIES,...VERB_CATEGORIES];
 
-const ADMIN_PIN = "6498";
+const ADMIN_PIN = "1234";
 function load(k){try{const r=localStorage.getItem(k);return r?JSON.parse(r):null}catch{return null}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
@@ -93,7 +94,7 @@ function Home({onStudent,onAdmin}){
     <div>
       <div className="logo">
         <div className="logo-title">Självtestplattform</div>
-        <div className="logo-sub">Svensk grammatik · verb, adjektiv, konjunktioner & subjunktioner</div>
+        <div className="logo-sub">Svenska grammatik · konjunktioner & subjunktioner</div>
       </div>
       <button className="hcard" onClick={onStudent}>
         <div style={{fontSize:22,marginBottom:8}}>📖</div>
@@ -567,7 +568,7 @@ function Quiz({test,onFinish,onBack}){
           {groupChoices.map(g=>(
             <button key={g} className="ans" onClick={()=>handleGroupPick(g)}>
               <span className="ans-key" style={{minWidth:72,flexShrink:0,fontWeight:500}}>{GROUP_INFO[g].label}</span>
-              {!isVerbGroup&&<span style={{fontSize:13,color:"var(--color-text-secondary)"}}>{GROUP_INFO[g].desc}</span>}
+              {!isVerbGroup&&cur===0&&<span style={{fontSize:13,color:"var(--color-text-secondary)"}}>{GROUP_INFO[g].desc}</span>}
             </button>
           ))}
         </div>
