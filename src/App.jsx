@@ -94,7 +94,7 @@ function Home({onStudent,onAdmin}){
     <div>
       <div className="logo">
         <div className="logo-title">Självtestplattform</div>
-        <div className="logo-sub">Svensk grammatik · konjunktioner & subjunktioner</div>
+        <div className="logo-sub">Svensk grammatik: test på verb, adjektiv och konjunktioner & subjunktioner</div>
       </div>
       <button className="hcard" onClick={onStudent}>
         <div style={{fontSize:22,marginBottom:8}}>📖</div>
