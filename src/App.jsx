@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BUILT_IN_TESTS, CATEGORIES } from "./questions.js";
+import { BUILT_IN_TESTS, CATEGORIES, KONJ_GROUPS, SUBJ_GROUPS } from "./questions.js";
 import { BUILT_IN_TESTS_ADJ, ADJ_CATEGORIES } from "./questions_adjektiv.js";
 import { BUILT_IN_TESTS_VERB, VERB_CATEGORIES } from "./questions_verb.js";
 import { VERB_BANK_TESTS } from "./questions_verb_bank.js";
@@ -7,7 +7,7 @@ import { ADJ_BANK_TESTS } from "./questions_adj_bank.js";
 const ALL_BUILT_IN=[...BUILT_IN_TESTS_VERB,...VERB_BANK_TESTS,...BUILT_IN_TESTS_ADJ,...ADJ_BANK_TESTS,...BUILT_IN_TESTS];
 const ALL_CATEGORIES=[...CATEGORIES,...ADJ_CATEGORIES,...VERB_CATEGORIES];
 
-const ADMIN_PIN = "6498";
+const ADMIN_PIN = "1234";
 function load(k){try{const r=localStorage.getItem(k);return r?JSON.parse(r):null}catch{return null}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
@@ -94,7 +94,7 @@ function Home({onStudent,onAdmin}){
     <div>
       <div className="logo">
         <div className="logo-title">Självtestplattform</div>
-        <div className="logo-sub">Svensk grammatik: test på verb, adjektiv och konjunktioner & subjunktioner</div>
+        <div className="logo-sub">Svenska grammatik · konjunktioner & subjunktioner</div>
       </div>
       <button className="hcard" onClick={onStudent}>
         <div style={{fontSize:22,marginBottom:8}}>📖</div>
@@ -306,21 +306,14 @@ function AdminResults({results,allTests}){
 }
 
 // ── ADMIN PANEL ───────────────────────────────────────────────────────────────
-function AdminPanel({custom,results,allTests,onSave,onDelete,onBack}){
-  const [tab,setTab]=useState("tests");
+function AdminPanel({custom,allTests,onSave,onDelete,onBack}){
   const [mode,setMode]=useState(null);
   if(mode!==null) return <CreateTest existing={mode==="new"?null:mode} onSave={t=>{onSave(t);setMode(null)}} onBack={()=>setMode(null)}/>;
   return(
     <div>
       <button className="back" onClick={onBack}>← Hem</button>
-      <div className="tabs">
-        <button className={`tab ${tab==="tests"?"on":""}`} onClick={()=>setTab("tests")}>Tester</button>
-        <button className={`tab ${tab==="results"?"on":""}`} onClick={()=>setTab("results")}>
-          Resultat{results.length>0&&` (${results.length})`}
-        </button>
-      </div>
-      {tab==="tests"&&<AdminTests custom={custom} onEdit={t=>setMode(t)} onCreate={()=>setMode("new")} onDelete={onDelete}/>}
-      {tab==="results"&&<AdminResults results={results} allTests={allTests}/>}
+      <div className="g2"/>
+      <AdminTests custom={custom} onEdit={t=>setMode(t)} onCreate={()=>setMode("new")} onDelete={onDelete}/>
     </div>
   );
 }
@@ -476,19 +469,31 @@ function Quiz({test,onFinish,onBack}){
 
   // ── STEG 1: Gruppidentifiering ────────────────────────────────────────────
   if(phase==="group"&&isTwoStage){
+    const isVerbGroup=q.groupType==="verb_1234";
+    const isKonj=q.groupType==="konj_type";
+    const isSubj=q.groupType==="subj_type";
+
     const groupChoices=
       q.groupType==="adj_abc"  ? ["A","B","C"] :
       q.groupType==="comp_1234"? ["1","2","3","4"] :
       q.groupType==="verb_1234"? ["1v","2a","2b","3v","4v"] :
+      q.groupType==="konj_type"? Object.keys(KONJ_GROUPS) :
+      q.groupType==="subj_type"? Object.keys(SUBJ_GROUPS) :
       ["A","B","C"];
 
     const displayToValue={"1v":"1","2a":"2a","2b":"2b","3v":"3","4v":"4"};
-    const isVerbGroup=q.groupType==="verb_1234";
 
     function handleGroupPick(displayKey){
       const val=isVerbGroup?(displayToValue[displayKey]||displayKey):displayKey;
       if(val===q.correctGroup){setPhase("form");setGroupErr(false);}
       else setGroupErr(true);
+    }
+
+    // Label+desc for konj/subj buttons
+    function groupLabel(g){
+      if(isKonj) return {label:g.charAt(0).toUpperCase()+g.slice(1), desc:KONJ_GROUPS[g]};
+      if(isSubj) return {label:g.charAt(0).toUpperCase()+g.slice(1), desc:SUBJ_GROUPS[g]};
+      return {label:GROUP_INFO[g]?.label||g, desc:GROUP_INFO[g]?.desc||""};
     }
 
     // Reference table for verbs – same layout as the laminated card
@@ -545,7 +550,8 @@ function Quiz({test,onFinish,onBack}){
         <div className="card" style={{marginBottom:"1rem",textAlign:"center",padding:"1.5rem 1.25rem"}}>
           {isVerbGroup&&<p style={{fontSize:11,fontWeight:500,color:"var(--color-text-secondary)",textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>Imperativ</p>}
           <p style={{fontSize:26,fontWeight:500,color:"var(--color-text-primary)"}}>{isVerbGroup?`${q.word}!`:q.word}</p>
-          {q.context&&<p style={{fontSize:16,color:"var(--color-text-secondary)",marginTop:8,lineHeight:1.6}}><QText text={q.context}/></p>}
+          {!isKonj&&!isSubj&&q.context&&<p style={{fontSize:16,color:"var(--color-text-secondary)",marginTop:8,lineHeight:1.6}}><QText text={q.context}/></p>}
+          {(isKonj||isSubj)&&q.context&&<p style={{fontSize:17,fontWeight:500,color:"var(--color-text-primary)",marginTop:8,lineHeight:1.7}}><QText text={q.context}/></p>}
         </div>
         {isVerbGroup&&cur===0&&<VerbTable/>}
         {isVerbGroup&&cur>0&&(
@@ -553,7 +559,7 @@ function Quiz({test,onFinish,onBack}){
             (Referenstabellen visas på första frågan.)
           </p>
         )}
-        {!isVerbGroup&&(
+        {!isVerbGroup&&!isKonj&&!isSubj&&(
           <p style={{fontSize:14,color:"var(--color-text-secondary)",marginBottom:".75rem"}}>
             {q.groupType==="adj_abc"
               ?"Vilken böjningsgrupp (A, B eller C) gäller för adjektivet i frasen?"
@@ -561,16 +567,20 @@ function Quiz({test,onFinish,onBack}){
           </p>
         )}
         <p style={{fontSize:14,color:"var(--color-text-secondary)",marginBottom:".75rem"}}>
-          {isVerbGroup?"Vilken grupp tillhör verbet?":""}
+          {isVerbGroup?"Vilken grupp tillhör verbet?":isKonj?"Vilken typ av konjunktion?":isSubj?"Vilken typ av subjunktion?":""}
         </p>
-        {groupErr&&<p style={{fontSize:13,color:"var(--color-text-danger)",marginBottom:".75rem",fontWeight:500}}>Fel grupp – försök igen!</p>}
+        {groupErr&&<p style={{fontSize:13,color:"var(--color-text-danger)",marginBottom:".75rem",fontWeight:500}}>Fel typ – försök igen!</p>}
         <div style={{display:"flex",flexDirection:"column",gap:8}}>
-          {groupChoices.map(g=>(
-            <button key={g} className="ans" onClick={()=>handleGroupPick(g)}>
-              <span className="ans-key" style={{minWidth:72,flexShrink:0,fontWeight:500}}>{GROUP_INFO[g].label}</span>
-              {!isVerbGroup&&cur===0&&<span style={{fontSize:13,color:"var(--color-text-secondary)"}}>{GROUP_INFO[g].desc}</span>}
-            </button>
-          ))}
+          {groupChoices.map(g=>{
+            const {label,desc}=groupLabel(g);
+            return(
+              <button key={g} className="ans" onClick={()=>handleGroupPick(g)}>
+                <span className="ans-key" style={{minWidth:72,flexShrink:0,fontWeight:500}}>{label}</span>
+                {(isKonj||isSubj)&&<span style={{fontSize:13,color:"var(--color-text-secondary)"}}>{desc}</span>}
+                {!isKonj&&!isSubj&&!isVerbGroup&&cur===0&&<span style={{fontSize:13,color:"var(--color-text-secondary)"}}>{desc}</span>}
+              </button>
+            );
+          })}
         </div>
       </div>
     );
@@ -585,12 +595,18 @@ function Quiz({test,onFinish,onBack}){
         <div style={{marginBottom:8}}>
           {(()=>{
             const verbDisplayKey={"1":"1v","2a":"2a","2b":"2b","3":"3v","4":"4v"};
-            const key=q.groupType==="verb_1234"
-              ?(verbDisplayKey[q.correctGroup]||q.correctGroup)
-              :q.correctGroup;
+            const isKonj2=q.groupType==="konj_type";
+            const isSubj2=q.groupType==="subj_type";
+            let label;
+            if(isKonj2) label=(q.correctGroup.charAt(0).toUpperCase()+q.correctGroup.slice(1));
+            else if(isSubj2) label=(q.correctGroup.charAt(0).toUpperCase()+q.correctGroup.slice(1));
+            else{
+              const key=q.groupType==="verb_1234"?(verbDisplayKey[q.correctGroup]||q.correctGroup):q.correctGroup;
+              label=GROUP_INFO[key]?.label||key;
+            }
             return(
               <span style={{fontSize:12,padding:"2px 10px",borderRadius:99,background:"var(--color-background-success)",color:"var(--color-text-success)",fontWeight:500}}>
-                {GROUP_INFO[key]?.label||key} ✓
+                {label} ✓
               </span>
             );
           })()}
@@ -599,8 +615,8 @@ function Quiz({test,onFinish,onBack}){
       <div className="card" style={{marginBottom:"1rem"}}>
         {isTwoStage
           ?<>
-            <p style={{fontSize:20,fontWeight:500,color:"var(--color-text-primary)",marginBottom:q.context?8:0}}>{q.word}</p>
-            {q.context&&<p style={{fontSize:14,color:"var(--color-text-secondary)",lineHeight:1.6,marginTop:4}}><QText text={q.context}/></p>}
+            {q.word&&<p style={{fontSize:20,fontWeight:500,color:"var(--color-text-primary)",marginBottom:q.context?8:0}}>{q.word}</p>}
+            {q.context&&<p style={{fontSize:q.word?14:17,fontWeight:q.word?400:500,color:q.word?"var(--color-text-secondary)":"var(--color-text-primary)",lineHeight:1.7,marginTop:q.word?4:0}}><QText text={q.context}/></p>}
           </>
           :<QText text={q.text}/>
         }
@@ -667,7 +683,7 @@ export default function App(){
           {view==="student"&&step==="quiz"&&<Quiz test={activeTest} onFinish={handleFinish} onBack={()=>setStep("tests")}/>}
 
           {view==="admin"&&!adminAuth&&<AdminLogin onAuth={()=>setAdminAuth(true)} onBack={()=>setView("home")}/>}
-          {view==="admin"&&adminAuth&&<AdminPanel custom={custom} results={results} allTests={allTests} onSave={saveTest} onDelete={deleteTest} onBack={()=>{setView("home");setAdminAuth(false)}}/>}
+          {view==="admin"&&adminAuth&&<AdminPanel custom={custom} allTests={allTests} onSave={saveTest} onDelete={deleteTest} onBack={()=>{setView("home");setAdminAuth(false)}}/>}
         </div>
       </div>
     </>
