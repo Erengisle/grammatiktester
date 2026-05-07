@@ -24,7 +24,7 @@ function doGet(e) {
 
   var resultat = hamtaElevResultat(ss, elevInfo.email);
 
-  var template = HtmlService.createTemplateFromFile("webbapp");
+  var template = HtmlService.createTemplateFromFile("webbapp1");
   template.namn    = elevInfo.namn;
   template.resultat = resultat;
 
