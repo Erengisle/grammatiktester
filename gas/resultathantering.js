@@ -148,9 +148,11 @@ function hamtaElevResultat(ss, email) {
 function ratta(svar, facit) {
   var ratt = 0;
   for (var i = 0; i < facit.length; i++) {
-    if (svar[i] !== undefined &&
-        svar[i].toString().trim().toLowerCase() ===
-        facit[i].toString().trim().toLowerCase()) ratt++;
+    var elevSvar  = svar[i] !== undefined ? svar[i].toString().trim().toLowerCase() : "";
+    var rattSvar  = facit[i] !== undefined ? facit[i].toString().trim().toLowerCase() : "";
+    var korrekt   = elevSvar === rattSvar;
+    Logger.log("F" + (i+1) + ": elev='" + elevSvar + "' facit='" + rattSvar + "' → " + (korrekt ? "RÄTT" : "FEL"));
+    if (korrekt) ratt++;
   }
   var procent = facit.length > 0 ? Math.round((ratt / facit.length) * 100) : 0;
   return { ratt: ratt, totalt: facit.length, procent: procent };
