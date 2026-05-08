@@ -67,11 +67,14 @@ function onFormSubmit(e) {
 
 function hittaTestInfo(ss, svarssheetNamn) {
   var reg  = ss.getSheetByName("Testregister");
-  if (!reg) return null;
+  if (!reg) { Logger.log("Fliken Testregister hittades inte"); return null; }
   var data = reg.getDataRange().getValues();
   // Rad 1 = rubrik, kolumn D (index 3) = Svarssheet
+  Logger.log("Söker efter svarssheet: '" + svarssheetNamn + "'");
   for (var i = 1; i < data.length; i++) {
-    if (data[i][3] === svarssheetNamn) {
+    var cellVarde = data[i][3] ? data[i][3].toString().trim() : "";
+    Logger.log("Testregister rad " + (i+1) + " kolumn D: '" + cellVarde + "'");
+    if (cellVarde === svarssheetNamn.trim()) {
       return { testId: data[i][0], omrade: data[i][1], facitflik: data[i][2] };
     }
   }
