@@ -96,25 +96,22 @@
     <table>
       <thead>
         <tr>
-          <th>Test</th>
           <th>Område</th>
-          <th>Resultat</th>
+          <th>Test</th>
           <th>Poäng</th>
-          <th>Datum</th>
+          <th>Procent</th>
         </tr>
       </thead>
       <tbody>
         <? for (var i = 0; i < resultat.length; i++) {
           var r = resultat[i];
           var klass = r.procent < 50 ? "rod" : r.procent < 75 ? "gul" : "gron";
-          var datum = r.datum ? new Date(r.datum).toLocaleDateString("sv-SE") : "–";
         ?>
         <tr>
-          <td><?= r.testId ?></td>
           <td><?= r.omrade ?></td>
-          <td><span class="badge <?= klass ?>"><?= r.procent ?>%</span></td>
+          <td><?= r.testId ?></td>
           <td><?= r.ratt ?>/<?= r.totalt ?></td>
-          <td><?= datum ?></td>
+          <td><span class="badge <?= klass ?>"><?= r.procent ?>%</span></td>
         </tr>
         <? } ?>
       </tbody>
