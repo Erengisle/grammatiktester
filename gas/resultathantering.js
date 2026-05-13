@@ -58,7 +58,7 @@ function onFormSubmit(e) {
   var rattning  = ratta(svarData, facitData);
 
   loggaResultat(ss, timestamp, email, testInfo.testId, testInfo.omrade, rattning);
-  uppdateraKlassoversikt(ss, elevInfo.namn, testInfo.omrade, rattning);
+  uppdateraKlassoversikt(ss, elevInfo.namn, testInfo.omrade, testInfo.testId, rattning);
 }
 
 // ---------------------------------------------------------------------------
@@ -195,20 +195,24 @@ function skickaValkommen(email, namn, token) {
 // KLASSÖVERSIKT: A=Namn, rad 1 = rubriker, kolumn B+ = ett område per kolumn
 // ---------------------------------------------------------------------------
 
-function uppdateraKlassoversikt(ss, namn, omrade, rattning) {
+function uppdateraKlassoversikt(ss, namn, omrade, testId, rattning) {
   var oversikt = ss.getSheetByName("KLASSÖVERSIKT");
   if (!oversikt) return;
+
+  // Bygg kolumnrubrik: "Verb 1", "Verb 2" osv.
+  var num = parseInt(testId.replace(/[^0-9]/g, '')) || "";
+  var kolumnNamn = omrade + (num !== "" ? " " + num : "");
 
   var data  = oversikt.getDataRange().getValues();
   var kolom = -1;
 
-  // Hitta kolumn för området (rad 1, från kolumn B)
+  // Hitta kolumn för detta test (rad 1, från kolumn B)
   for (var k = 1; k < data[0].length; k++) {
-    if (data[0][k] === omrade) { kolom = k + 1; break; }
+    if (data[0][k] === kolumnNamn) { kolom = k + 1; break; }
   }
   if (kolom === -1) {
     kolom = oversikt.getLastColumn() + 1;
-    oversikt.getRange(1, kolom).setValue(omrade);
+    oversikt.getRange(1, kolom).setValue(kolumnNamn);
   }
 
   // Hitta rad för eleven (kolumn A = Namn)
