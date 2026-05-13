@@ -5,217 +5,334 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grammatikresultat</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Spectral:wght@400;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:         #F7F4EE;
-      --surface:    #FFFFFF;
-      --ink:        #0F1B2D;
-      --slate:      #556070;
-      --mist:       #96A3B0;
-      --fog:        #DDD8D0;
-      --amber:      #D4880A;
-      --amber-light:#FDF3E0;
-      --amber-dark: #A3660A;
-      --green:      #1A7A4A;
-      --green-bg:   #E8F5EE;
-      --yellow:     #A07800;
-      --yellow-bg:  #FDF8D0;
-      --red:        #B52020;
-      --red-bg:     #FDEAEA;
-      --radius:     12px;
-      --shadow:     0 2px 8px rgba(15,27,45,0.08);
+      --bg:       #fafaf7;
+      --surface:  #ffffff;
+      --ink:      #1a1d1c;
+      --mute:     #7a7a76;
+      --hair:     #ecebe6;
+      --accent:   #3a6b54;
+      --warn:     #c66a3e;
     }
 
     body {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--ink);
-      padding: 24px 16px 48px;
-      max-width: 480px;
+      padding: 28px 20px 48px;
+      max-width: 860px;
       margin: 0 auto;
     }
 
-    header {
-      margin-bottom: 28px;
-    }
-
-    header h1 {
-      font-family: 'Spectral', Georgia, serif;
-      font-size: 1.75rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--ink);
-      margin-bottom: 4px;
-    }
-
-    header p {
-      font-size: 0.875rem;
-      color: var(--slate);
-    }
-
-    .divider {
-      width: 40px;
-      height: 3px;
-      background: var(--amber);
-      border-radius: 2px;
-      margin: 10px 0 0;
-    }
-
-    .area-card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      margin-bottom: 16px;
-      overflow: hidden;
-    }
-
-    .area-header {
-      padding: 14px 18px 10px;
-      border-bottom: 1px solid var(--fog);
+    /* ── Header ── */
+    .header {
       display: flex;
-      align-items: center;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
       gap: 8px;
     }
-
-    .area-header h2 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
+    .header-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--slate);
+      color: var(--mute);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .header h1 {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+    .header-meta {
+      font-size: 11px;
+      color: var(--mute);
+      text-align: right;
     }
 
-    .area-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--amber);
+    /* ── Stat cards ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 600px) {
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--hair);
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+    .stat-card .label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mute);
+      font-weight: 500;
+    }
+    .stat-card .value {
+      font-size: 28px;
+      font-weight: 500;
+      margin-top: 4px;
+      letter-spacing: -0.025em;
+      line-height: 1;
+    }
+    .stat-card .value.big { font-size: 36px; }
+    .stat-card .value .unit { font-size: 18px; color: var(--mute); margin-left: 1px; }
+    .stat-card .sub {
+      font-size: 11px;
+      color: var(--mute);
+      margin-top: 6px;
+    }
+
+    /* ── Table ── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--hair);
+      border-radius: 12px;
+      overflow: hidden;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 560px;
+    }
+    thead tr { background: #fafaf6; }
+    th {
+      padding: 11px 6px;
+      font-weight: 500;
+      font-size: 10px;
+      color: var(--mute);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--hair);
+    }
+    th.area-col { text-align: left; padding-left: 14px; min-width: 130px; }
+    th.trend-col { min-width: 78px; }
+    th.medel-col { min-width: 56px; }
+
+    td {
+      padding: 10px 0;
+      font-size: 11px;
+      font-weight: 500;
+      text-align: center;
+      vertical-align: middle;
+    }
+    td.area-col {
+      text-align: left;
+      padding-left: 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+    }
+    td.medel-col {
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 12px 10px 6px;
+    }
+    td.trend-col { padding: 7px 8px; }
+    tr:not(:last-child) td { border-bottom: 1px solid var(--hair); }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      font-size: 10.5px;
+      color: var(--mute);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      display: inline-block;
       flex-shrink: 0;
     }
 
-    .test-row {
-      padding: 12px 18px;
-      border-bottom: 1px solid var(--fog);
-      display: grid;
-      grid-template-columns: 56px 1fr 52px 52px;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .test-row:last-child { border-bottom: none; }
-
-    .test-id {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--slate);
-    }
-
-    .bar-wrap {
-      background: var(--fog);
-      border-radius: 99px;
-      height: 6px;
-      overflow: hidden;
-    }
-
-    .bar {
-      height: 100%;
-      border-radius: 99px;
-      transition: width 0.4s ease;
-    }
-
-    .bar.gron  { background: var(--green); }
-    .bar.gul   { background: var(--yellow); }
-    .bar.rod   { background: var(--red); }
-
-    .score {
-      font-size: 0.8rem;
-      color: var(--mist);
-      text-align: right;
-      white-space: nowrap;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3px 8px;
-      border-radius: 99px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .badge.gron { background: var(--green-bg);  color: var(--green); }
-    .badge.gul  { background: var(--yellow-bg); color: var(--yellow); }
-    .badge.rod  { background: var(--red-bg);    color: var(--red); }
-
     .tom {
       text-align: center;
-      color: var(--mist);
+      color: var(--mute);
+      padding: 60px 0;
       font-size: 0.95rem;
-      padding: 48px 0;
-    }
-
-    footer {
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--mist);
-      margin-top: 24px;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1><?= namn ?></h1>
-    <p>Dina bästa resultat per test</p>
-    <div class="divider"></div>
-  </header>
+<?
+  /* ── Beräkningar ── */
+  function cellFarg(p) {
+    if (p === null || p === undefined) return null;
+    if (p < 50) return { bg: "#fde8e1", bar: "#c66a3e", text: "#1a1d1c" };
+    if (p < 75) return { bg: "#fdf2d8", bar: "#c4a050", text: "#1a1d1c" };
+    if (p < 90) return { bg: "#e1ecdb", bar: "#5a8567", text: "#1a1d1c" };
+    return { bg: "#cde0c8", bar: "#3a6b54", text: "#1a1d1c" };
+  }
 
-  <?
-    var grouped = {};
-    var omraden = [];
-    for (var i = 0; i < resultat.length; i++) {
-      var r = resultat[i];
-      if (!grouped[r.omrade]) { grouped[r.omrade] = []; omraden.push(r.omrade); }
-      grouped[r.omrade].push(r);
-    }
-  ?>
+  // Gruppera resultat per område och testnummer
+  var grouped = {};
+  var omraden = [];
+  var maxNum = 0;
+  var totalSum = 0, totalCount = 0;
 
-  <? if (omraden.length === 0) { ?>
-    <div class="tom">Inga resultat registrerade ännu.</div>
-  <? } else { ?>
-    <? for (var o = 0; o < omraden.length; o++) {
-      var omrade = omraden[o];
-      var tester = grouped[omrade];
-    ?>
-    <div class="area-card">
-      <div class="area-header">
-        <div class="area-dot"></div>
-        <h2><?= omrade ?></h2>
+  for (var i = 0; i < resultat.length; i++) {
+    var r = resultat[i];
+    var num = parseInt(r.testId.replace(/[^0-9]/g, '')) || 1;
+    if (num > maxNum) maxNum = num;
+    if (!grouped[r.omrade]) { grouped[r.omrade] = {}; omraden.push(r.omrade); }
+    grouped[r.omrade][num] = r.procent;
+    totalSum += r.procent;
+    totalCount++;
+  }
+
+  var cols = Math.max(5, Math.min(10, maxNum));
+
+  // Medel per område
+  var areaMedel = {};
+  for (var o = 0; o < omraden.length; o++) {
+    var om = omraden[o];
+    var s = 0, c = 0;
+    for (var k in grouped[om]) { s += grouped[om][k]; c++; }
+    areaMedel[om] = c > 0 ? Math.round(s / c) : null;
+  }
+
+  var totalMedel = totalCount > 0 ? Math.round(totalSum / totalCount) : null;
+
+  // Starkast / svagast område
+  var starkast = null, svagast = null;
+  for (var o = 0; o < omraden.length; o++) {
+    var om = omraden[o];
+    var med = areaMedel[om];
+    if (med === null) continue;
+    if (starkast === null || med > areaMedel[starkast]) starkast = om;
+    if (svagast === null || med < areaMedel[svagast]) svagast = om;
+  }
+?>
+
+<? if (omraden.length === 0) { ?>
+  <div class="tom">Inga resultat registrerade ännu.</div>
+<? } else { ?>
+
+  <div class="header">
+    <div>
+      <div class="header-label">Grammatik</div>
+      <h1>Hej <?= namn ?> — så går det.</h1>
+    </div>
+    <div class="header-meta">
+      <?= totalCount ?> avklarade test
+    </div>
+  </div>
+
+  <!-- Statistikkort -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="label">Totalt medel</div>
+      <div class="value big" style="color:var(--accent)">
+        <?= totalMedel ?><span class="unit">%</span>
       </div>
-      <? for (var t = 0; t < tester.length; t++) {
-        var r = tester[t];
-        var klass = r.procent < 50 ? "rod" : r.procent < 75 ? "gul" : "gron";
-      ?>
-      <div class="test-row">
-        <span class="test-id"><?= r.testId ?></span>
-        <div class="bar-wrap">
-          <div class="bar <?= klass ?>" style="width:<?= r.procent ?>%"></div>
-        </div>
-        <span class="score"><?= r.ratt ?>/<?= r.totalt ?></span>
-        <span class="badge <?= klass ?>"><?= r.procent ?>%</span>
-      </div>
-      <? } ?>
+      <div class="sub">Baserat på <?= totalCount ?> test</div>
+    </div>
+    <? if (starkast) { var sf = cellFarg(areaMedel[starkast]); ?>
+    <div class="stat-card">
+      <div class="label">Starkast</div>
+      <div class="value" style="color:var(--accent)"><?= areaMedel[starkast] ?><span class="unit">%</span></div>
+      <div class="sub"><?= starkast ?></div>
     </div>
     <? } ?>
-  <? } ?>
+    <? if (svagast) { ?>
+    <div class="stat-card">
+      <div class="label">Träna mer</div>
+      <div class="value" style="color:var(--warn)"><?= areaMedel[svagast] ?><span class="unit">%</span></div>
+      <div class="sub"><?= svagast ?></div>
+    </div>
+    <? } ?>
+    <div class="stat-card">
+      <div class="label">Områden</div>
+      <div class="value" style="color:var(--ink)"><?= omraden.length ?></div>
+      <div class="sub">påbörjade</div>
+    </div>
+  </div>
 
-  <footer>Uppdateras automatiskt vid varje ny inlämning.</footer>
+  <!-- Tabell -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="area-col">Område</th>
+          <? for (var t = 1; t <= cols; t++) { ?>
+          <th><?= t ?></th>
+          <? } ?>
+          <th class="trend-col">Trend</th>
+          <th class="medel-col">Medel</th>
+        </tr>
+      </thead>
+      <tbody>
+        <? for (var o = 0; o < omraden.length; o++) {
+          var om = omraden[o];
+          var med = areaMedel[om];
+          var mf = cellFarg(med);
+        ?>
+        <tr>
+          <td class="area-col"><?= om ?></td>
+          <? for (var t = 1; t <= cols; t++) {
+            var p = grouped[om][t];
+            var cf = p !== undefined ? cellFarg(p) : null;
+            var bgStyle = cf ? 'background:' + cf.bg + ';' : '';
+            var txtColor = cf ? cf.text : '#c9c5b8';
+          ?>
+          <td style="<?= bgStyle ?> color:<?= txtColor ?>">
+            <?= p !== undefined ? p : '·' ?>
+          </td>
+          <? } ?>
+          <td class="trend-col">
+            <svg width="64" height="20" viewBox="0 0 64 20">
+              <? for (var t = 1; t <= cols; t++) {
+                var p = grouped[om][t];
+                var h = p !== undefined ? Math.round(p / 100 * 16) + 2 : 2;
+                var barColor = p !== undefined ? cellFarg(p).bar : '#e6e1d4';
+                var x = (t - 1) * (64 / cols) + 1;
+                var w = (64 / cols) - 2;
+              ?>
+              <rect x="<?= x ?>" y="<?= 20 - h ?>" width="<?= w ?>" height="<?= h ?>" rx="1.5" fill="<?= barColor ?>"></rect>
+              <? } ?>
+            </svg>
+          </td>
+          <td class="medel-col" style="color:<?= mf ? mf.bar : '#c9c5b8' ?>">
+            <?= med !== null ? med : '—' ?>
+          </td>
+        </tr>
+        <? } ?>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Förklaring -->
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot" style="background:#fde8e1;border:1px solid #c66a3e"></span>0–49 · behöver träning</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#fdf2d8;border:1px solid #c4a050"></span>50–74 · godkänt</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#e1ecdb;border:1px solid #5a8567"></span>75–89 · bra</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#cde0c8;border:1px solid #3a6b54"></span>90–100 · mycket bra</div>
+  </div>
+
+<? } ?>
 
 </body>
 </html>
