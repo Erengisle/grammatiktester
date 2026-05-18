@@ -10,13 +10,13 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #fafaf7;
+      --bg:       #f4f1ea;
       --surface:  #ffffff;
-      --ink:      #1a1d1c;
+      --ink:      #1c1f1d;
       --mute:     #7a7a76;
-      --hair:     #ecebe6;
+      --hair:     #ece8de;
       --accent:   #3a6b54;
-      --warn:     #c66a3e;
+      --warn:     #a86a3e;
     }
 
     body {
@@ -181,10 +181,10 @@
   /* ── Beräkningar ── */
   function cellFarg(p) {
     if (p === null || p === undefined) return null;
-    if (p < 50) return { bg: "#fde8e1", bar: "#c66a3e", text: "#1a1d1c" };
-    if (p < 75) return { bg: "#fdf2d8", bar: "#c4a050", text: "#1a1d1c" };
-    if (p < 90) return { bg: "#e1ecdb", bar: "#5a8567", text: "#1a1d1c" };
-    return { bg: "#cde0c8", bar: "#3a6b54", text: "#1a1d1c" };
+    if (p < 50) return { bg: "#ecd5c5", text: "#7a3a26" };
+    if (p < 75) return { bg: "#efe1c1", text: "#6b5524" };
+    if (p < 90) return { bg: "#d4e2cc", text: "#2c5a40" };
+    return { bg: "#b8cdb4", text: "#1c4030" };
   }
 
   // Gruppera resultat per område och testnummer
@@ -307,7 +307,7 @@
               <? for (var t = 1; t <= cols; t++) {
                 var p = grouped[om][t];
                 var h = p !== undefined ? Math.round(p / 100 * 16) + 2 : 2;
-                var barColor = p !== undefined ? cellFarg(p).bar : '#e6e1d4';
+                var barColor = p !== undefined ? cellFarg(p).bg : '#e6e1d4';
                 var x = (t - 1) * (64 / cols) + 1;
                 var w = (64 / cols) - 2;
               ?>
@@ -315,7 +315,7 @@
               <? } ?>
             </svg>
           </td>
-          <td class="medel-col" style="color:<?= mf ? mf.bar : '#c9c5b8' ?>">
+          <td class="medel-col" style="color:<?= mf ? mf.text : '#c9c5b8' ?>">
             <?= med !== null ? med : '—' ?>
           </td>
         </tr>
@@ -326,10 +326,10 @@
 
   <!-- Förklaring -->
   <div class="legend">
-    <div class="legend-item"><span class="legend-dot" style="background:#fde8e1;border:1px solid #c66a3e"></span>0–49 · behöver träning</div>
-    <div class="legend-item"><span class="legend-dot" style="background:#fdf2d8;border:1px solid #c4a050"></span>50–74 · godkänt</div>
-    <div class="legend-item"><span class="legend-dot" style="background:#e1ecdb;border:1px solid #5a8567"></span>75–89 · bra</div>
-    <div class="legend-item"><span class="legend-dot" style="background:#cde0c8;border:1px solid #3a6b54"></span>90–100 · mycket bra</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#ecd5c5"></span>0–49 · behöver träning</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#efe1c1"></span>50–74 · godkänt</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#d4e2cc"></span>75–89 · bra</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#b8cdb4"></span>90–100 · mycket bra</div>
   </div>
 
 <? } ?>
