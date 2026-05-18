@@ -217,21 +217,32 @@ function uppdateraKlassoversikt(ss) {
     }
   }
 
-  // Samla alla unika testkolumner och sortera dem
+  // Samla alla unika testkolumner och sortera dem, gruppera per område
   var testKolumner = [];
+  var omradenOrdning = [];
   for (var email in basta) {
     for (var testId in basta[email]) {
-      var num = parseInt(testId.replace(/[^0-9]/g, '')) || 0;
+      var num    = parseInt(testId.replace(/[^0-9]/g, '')) || 0;
       var omrade = basta[email][testId].omrade;
       var kolNamn = omrade + (num ? " " + num : "");
       if (testKolumner.indexOf(kolNamn) === -1) testKolumner.push(kolNamn);
+      if (omradenOrdning.indexOf(omrade) === -1) omradenOrdning.push(omrade);
     }
   }
   testKolumner.sort();
+  omradenOrdning.sort();
 
-  // Bygg tabell i minnet
-  var rubrik = ["Namn"].concat(testKolumner).concat(["Totalt"]);
-  var rader  = [rubrik];
+  // Bygg rubrikrad: testkolumner med medel-kolumn efter varje område
+  var rubrik = ["Namn"];
+  for (var o = 0; o < omradenOrdning.length; o++) {
+    var om = omradenOrdning[o];
+    var omTests = testKolumner.filter(function(k) { return k.indexOf(om + " ") === 0 || k === om; });
+    for (var k = 0; k < omTests.length; k++) rubrik.push(omTests[k]);
+    rubrik.push(om + " medel");
+  }
+  rubrik.push("Totalt");
+
+  var rader = [rubrik];
 
   for (var i = 1; i < elever.length; i++) {
     var email = elever[i][0] ? elever[i][0].toString().toLowerCase().trim() : "";
@@ -239,23 +250,33 @@ function uppdateraKlassoversikt(ss) {
     if (!email || !namn) continue;
 
     var elevData = basta[email] || {};
+
+    // Bygg uppslagstabell kolumnnamn → procent för denna elev
+    var elevKolVarden = {};
+    for (var testId in elevData) {
+      var num    = parseInt(testId.replace(/[^0-9]/g, '')) || 0;
+      var kolNamn = elevData[testId].omrade + (num ? " " + num : "");
+      elevKolVarden[kolNamn] = elevData[testId].procent;
+    }
+
     var rad = [namn];
     var totalSum = 0, totalCount = 0;
 
-    for (var k = 0; k < testKolumner.length; k++) {
-      // Hitta testId som matchar kolumnnamnet
-      var varde = "";
-      for (var testId in elevData) {
-        var num = parseInt(testId.replace(/[^0-9]/g, '')) || 0;
-        var kolNamn = elevData[testId].omrade + (num ? " " + num : "");
-        if (kolNamn === testKolumner[k]) {
-          varde = elevData[testId].procent;
-          totalSum += varde;
-          totalCount++;
-          break;
-        }
+    for (var o = 0; o < omradenOrdning.length; o++) {
+      var om = omradenOrdning[o];
+      var omTests = testKolumner.filter(function(k) { return k.indexOf(om + " ") === 0 || k === om; });
+      var omSum = 0, omCount = 0;
+
+      for (var k = 0; k < omTests.length; k++) {
+        var v = elevKolVarden[omTests[k]] !== undefined ? elevKolVarden[omTests[k]] : "";
+        rad.push(v);
+        if (v !== "") { omSum += v; omCount++; }
       }
-      rad.push(varde);
+
+      // Områdesmedel
+      var omMedel = omCount > 0 ? Math.round(omSum / omCount) : "";
+      rad.push(omMedel);
+      if (omMedel !== "") { totalSum += omMedel; totalCount++; }
     }
 
     rad.push(totalCount > 0 ? Math.round(totalSum / totalCount) : "");
@@ -270,6 +291,15 @@ function uppdateraKlassoversikt(ss) {
 
   // Formatering
   oversikt.getRange(1, 1, 1, rubrik.length).setFontWeight("bold");
+
+  // Markera medel-kolumner med fet stil
+  for (var c = 1; c <= rubrik.length; c++) {
+    var header = rubrik[c - 1] ? rubrik[c - 1].toString() : "";
+    if (header.indexOf(" medel") !== -1 || header === "Totalt") {
+      oversikt.getRange(1, c, rader.length, 1).setFontWeight("bold");
+    }
+  }
+
   for (var r = 2; r <= rader.length; r++) {
     for (var c = 2; c <= rubrik.length; c++) {
       var v = rader[r - 1][c - 1];
