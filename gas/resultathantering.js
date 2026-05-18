@@ -211,7 +211,18 @@ function uppdateraKlassoversikt(ss, namn, omrade, testId, rattning) {
     if (data[0][k] === kolumnNamn) { kolom = k + 1; break; }
   }
   if (kolom === -1) {
-    kolom = oversikt.getLastColumn() + 1;
+    // Infoga i sorterad position (alfabetiskt = rätt område- och nummerordning)
+    var infogaEfter = 1;
+    for (var k = 1; k < data[0].length; k++) {
+      var befintlig = data[0][k] ? data[0][k].toString() : "";
+      if (befintlig && befintlig < kolumnNamn) infogaEfter = k + 1;
+    }
+    if (infogaEfter < oversikt.getLastColumn()) {
+      oversikt.insertColumnAfter(infogaEfter);
+      kolom = infogaEfter + 1;
+    } else {
+      kolom = oversikt.getLastColumn() + 1;
+    }
     oversikt.getRange(1, kolom).setValue(kolumnNamn);
   }
 
