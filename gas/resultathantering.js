@@ -58,7 +58,7 @@ function onFormSubmit(e) {
   var rattning  = ratta(svarData, facitData);
 
   loggaResultat(ss, timestamp, email, testInfo.testId, testInfo.omrade, rattning);
-  uppdateraKlassoversikt(ss, elevInfo.namn, testInfo.omrade, testInfo.testId, rattning);
+  uppdateraKlassoversikt(ss);
 }
 
 // ---------------------------------------------------------------------------
@@ -192,46 +192,120 @@ function skickaValkommen(email, namn, token) {
 
 // ---------------------------------------------------------------------------
 // Klassöversikt
-// KLASSÖVERSIKT: A=Namn, rad 1 = rubriker, kolumn B+ = ett område per kolumn
+// Byggs om helt från RESULTAT_LOGG vid varje anrop – robust och alltid korrekt
 // ---------------------------------------------------------------------------
 
-function uppdateraKlassoversikt(ss, namn, omrade, testId, rattning) {
+function uppdateraKlassoversikt(ss) {
   var oversikt = ss.getSheetByName("KLASSÖVERSIKT");
-  if (!oversikt) return;
+  if (!oversikt) oversikt = ss.insertSheet("KLASSÖVERSIKT");
 
-  // Bygg kolumnrubrik: "Verb 1", "Verb 2" osv.
-  var num = parseInt(testId.replace(/[^0-9]/g, '')) || "";
-  var kolumnNamn = omrade + (num !== "" ? " " + num : "");
+  var elever = ss.getSheetByName("Elever").getDataRange().getValues();
+  var logg   = ss.getSheetByName("RESULTAT_LOGG").getDataRange().getValues();
 
-  var data  = oversikt.getDataRange().getValues();
-  var kolom = -1;
-
-  // Hitta kolumn för detta test (rad 1, från kolumn B)
-  for (var k = 1; k < data[0].length; k++) {
-    if (data[0][k] === kolumnNamn) { kolom = k + 1; break; }
-  }
-  if (kolom === -1) {
-    kolom = oversikt.getLastColumn() + 1;
-    oversikt.getRange(1, kolom).setValue(kolumnNamn);
-  }
-
-  // Hitta rad för eleven (kolumn A = Namn)
-  var elevRad = -1;
-  for (var r = 1; r < data.length; r++) {
-    if (data[r][0].toString().trim() === namn) {
-      elevRad = r + 1; break;
+  // Samla bästa resultat per elev och test från loggen
+  // basta[email][testId] = { procent, omrade }
+  var basta = {};
+  for (var i = 1; i < logg.length; i++) {
+    var email   = logg[i][1] ? logg[i][1].toString().toLowerCase().trim() : "";
+    var testId  = logg[i][2] ? logg[i][2].toString() : "";
+    var omrade  = logg[i][3] ? logg[i][3].toString() : "";
+    var procent = parseInt(logg[i][4]) || 0;
+    if (!email || !testId) continue;
+    if (!basta[email]) basta[email] = {};
+    if (!basta[email][testId] || procent > basta[email][testId].procent) {
+      basta[email][testId] = { procent: procent, omrade: omrade };
     }
   }
-  if (elevRad === -1) {
-    elevRad = oversikt.getLastRow() + 1;
-    oversikt.getRange(elevRad, 1).setValue(namn);
+
+  // Samla alla unika testkolumner och sortera dem, gruppera per område
+  var testKolumner = [];
+  var omradenOrdning = [];
+  for (var email in basta) {
+    for (var testId in basta[email]) {
+      var num    = parseInt(testId.replace(/[^0-9]/g, '')) || 0;
+      var omrade = basta[email][testId].omrade;
+      var kolNamn = omrade + (num ? " " + num : "");
+      if (testKolumner.indexOf(kolNamn) === -1) testKolumner.push(kolNamn);
+      if (omradenOrdning.indexOf(omrade) === -1) omradenOrdning.push(omrade);
+    }
+  }
+  testKolumner.sort();
+  omradenOrdning.sort();
+
+  // Bygg rubrikrad: testkolumner med medel-kolumn efter varje område
+  var rubrik = ["Namn"];
+  for (var o = 0; o < omradenOrdning.length; o++) {
+    var om = omradenOrdning[o];
+    var omTests = testKolumner.filter(function(k) { return k.indexOf(om + " ") === 0 || k === om; });
+    for (var k = 0; k < omTests.length; k++) rubrik.push(omTests[k]);
+    rubrik.push(om + " medel");
+  }
+  rubrik.push("Totalt");
+
+  var rader = [rubrik];
+
+  for (var i = 1; i < elever.length; i++) {
+    var email = elever[i][0] ? elever[i][0].toString().toLowerCase().trim() : "";
+    var namn  = elever[i][1] ? elever[i][1].toString() : "";
+    if (!email || !namn) continue;
+
+    var elevData = basta[email] || {};
+
+    // Bygg uppslagstabell kolumnnamn → procent för denna elev
+    var elevKolVarden = {};
+    for (var testId in elevData) {
+      var num    = parseInt(testId.replace(/[^0-9]/g, '')) || 0;
+      var kolNamn = elevData[testId].omrade + (num ? " " + num : "");
+      elevKolVarden[kolNamn] = elevData[testId].procent;
+    }
+
+    var rad = [namn];
+    var totalSum = 0, totalCount = 0;
+
+    for (var o = 0; o < omradenOrdning.length; o++) {
+      var om = omradenOrdning[o];
+      var omTests = testKolumner.filter(function(k) { return k.indexOf(om + " ") === 0 || k === om; });
+      var omSum = 0, omCount = 0;
+
+      for (var k = 0; k < omTests.length; k++) {
+        var v = elevKolVarden[omTests[k]] !== undefined ? elevKolVarden[omTests[k]] : "";
+        rad.push(v);
+        if (v !== "") { omSum += v; omCount++; }
+      }
+
+      // Områdesmedel
+      var omMedel = omCount > 0 ? Math.round(omSum / omCount) : "";
+      rad.push(omMedel);
+      if (omMedel !== "") { totalSum += omMedel; totalCount++; }
+    }
+
+    rad.push(totalCount > 0 ? Math.round(totalSum / totalCount) : "");
+    rader.push(rad);
   }
 
-  var cell      = oversikt.getRange(elevRad, kolom);
-  var befintlig = parseInt(cell.getValue()) || 0;
-  if (rattning.procent > befintlig) {
-    cell.setValue(rattning.procent);
-    cell.setBackground(beraknaFarg(rattning.procent));
+  // Skriv allt i ett anrop
+  oversikt.clearContents();
+  oversikt.clearFormats();
+  var range = oversikt.getRange(1, 1, rader.length, rubrik.length);
+  range.setValues(rader);
+
+  // Formatering
+  oversikt.getRange(1, 1, 1, rubrik.length).setFontWeight("bold");
+
+  // Markera medel-kolumner med fet stil
+  for (var c = 1; c <= rubrik.length; c++) {
+    var header = rubrik[c - 1] ? rubrik[c - 1].toString() : "";
+    if (header.indexOf(" medel") !== -1 || header === "Totalt") {
+      oversikt.getRange(1, c, rader.length, 1).setFontWeight("bold");
+    }
+  }
+
+  for (var r = 2; r <= rader.length; r++) {
+    for (var c = 2; c <= rubrik.length; c++) {
+      var v = rader[r - 1][c - 1];
+      if (v === "" || isNaN(v)) continue;
+      oversikt.getRange(r, c).setBackground(beraknaFarg(v));
+    }
   }
 }
 
