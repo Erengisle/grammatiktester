@@ -9,7 +9,12 @@
  */
 
 function doGet(e) {
+  var view  = e && e.parameter && e.parameter.view  ? e.parameter.view  : "";
   var token = e && e.parameter && e.parameter.token ? e.parameter.token : "";
+
+  if (view === "klass") {
+    return visaKlassoversikt();
+  }
 
   if (!token) {
     return felSida("Ogiltig länk – ingen token angiven.");
@@ -30,6 +35,16 @@ function doGet(e) {
 
   return template.evaluate()
     .setTitle(elevInfo.namn + " – Grammatikresultat")
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+function visaKlassoversikt() {
+  var ss        = SpreadsheetApp.getActiveSpreadsheet();
+  var klassData = hamtaKlassData(ss);
+  var template  = HtmlService.createTemplateFromFile("klassoversikt");
+  template.klassData = klassData;
+  return template.evaluate()
+    .setTitle("Klassöversikt – Grammatik")
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 

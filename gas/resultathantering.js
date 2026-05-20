@@ -144,6 +144,79 @@ function hamtaElevResultat(ss, email) {
   return Object.keys(basta).map(function (k) { return basta[k]; });
 }
 
+// Returnerar aggregerad data för hela klassen (används av klassöversikts-webbappen)
+function hamtaKlassData(ss) {
+  var elever = ss.getSheetByName("Elever").getDataRange().getValues();
+  var logg   = ss.getSheetByName("RESULTAT_LOGG").getDataRange().getValues();
+
+  var basta = {};
+  var omradenOrdning = [];
+  for (var i = 1; i < logg.length; i++) {
+    var email   = logg[i][1] ? logg[i][1].toString().toLowerCase().trim() : "";
+    var testId  = logg[i][2] ? logg[i][2].toString() : "";
+    var omrade  = logg[i][3] ? logg[i][3].toString() : "";
+    var procent = parseInt(logg[i][4]) || 0;
+    if (!email || !testId) continue;
+    if (!basta[email]) basta[email] = {};
+    if (!basta[email][testId] || procent > basta[email][testId].procent) {
+      basta[email][testId] = { procent: procent, omrade: omrade };
+    }
+    if (omradenOrdning.indexOf(omrade) === -1) omradenOrdning.push(omrade);
+  }
+  omradenOrdning.sort();
+
+  var studenter = [];
+  for (var i = 1; i < elever.length; i++) {
+    var email = elever[i][0] ? elever[i][0].toString().toLowerCase().trim() : "";
+    var namn  = elever[i][1] ? elever[i][1].toString() : "";
+    if (!email || !namn) continue;
+
+    var elevData    = basta[email] || {};
+    var omradeMedel = {};
+    var totalSum = 0, totalCount = 0;
+
+    for (var o = 0; o < omradenOrdning.length; o++) {
+      var om = omradenOrdning[o];
+      var omSum = 0, omCount = 0;
+      for (var testId in elevData) {
+        if (elevData[testId].omrade === om) { omSum += elevData[testId].procent; omCount++; }
+      }
+      var med = omCount > 0 ? Math.round(omSum / omCount) : null;
+      omradeMedel[om] = med;
+      if (med !== null) { totalSum += med; totalCount++; }
+    }
+
+    studenter.push({
+      namn:        namn,
+      omradeMedel: omradeMedel,
+      totalt:      totalCount > 0 ? Math.round(totalSum / totalCount) : null
+    });
+  }
+
+  // Klassmedel per område
+  var klassStats = {};
+  for (var o = 0; o < omradenOrdning.length; o++) {
+    var om = omradenOrdning[o];
+    var s = 0, c = 0;
+    for (var j = 0; j < studenter.length; j++) {
+      if (studenter[j].omradeMedel[om] !== null) { s += studenter[j].omradeMedel[om]; c++; }
+    }
+    klassStats[om] = c > 0 ? Math.round(s / c) : null;
+  }
+
+  var ktSum = 0, ktCount = 0;
+  for (var j = 0; j < studenter.length; j++) {
+    if (studenter[j].totalt !== null) { ktSum += studenter[j].totalt; ktCount++; }
+  }
+
+  return {
+    omraden:    omradenOrdning,
+    studenter:  studenter,
+    klassStats: klassStats,
+    klassTotal: ktCount > 0 ? Math.round(ktSum / ktCount) : null
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Rättning
 // ---------------------------------------------------------------------------

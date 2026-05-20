@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klassöversikt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #f4f1ea;
+      --surface: #ffffff;
+      --ink:     #1c1f1d;
+      --mute:    #7a7a76;
+      --hair:    #ece8de;
+      --accent:  #3a6b54;
+      --warn:    #a86a3e;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 28px 20px 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .header-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mute);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .header h1 {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+    .header-meta { font-size: 11px; color: var(--mute); text-align: right; }
+
+    /* ── Stat cards ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 640px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--hair);
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+    .stat-card .label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mute);
+      font-weight: 500;
+    }
+    .stat-card .value {
+      font-size: 28px;
+      font-weight: 500;
+      margin-top: 4px;
+      letter-spacing: -0.025em;
+      line-height: 1;
+    }
+    .stat-card .value.big { font-size: 36px; }
+    .stat-card .value .unit { font-size: 18px; color: var(--mute); margin-left: 1px; }
+    .stat-card .sub { font-size: 11px; color: var(--mute); margin-top: 6px; }
+
+    /* ── Table ── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--hair);
+      border-radius: 12px;
+      overflow: hidden;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 400px;
+    }
+    thead tr { background: #fafaf6; }
+    th {
+      padding: 11px 6px;
+      font-weight: 500;
+      font-size: 10px;
+      color: var(--mute);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--hair);
+      white-space: nowrap;
+      user-select: none;
+    }
+    th.sortable { cursor: pointer; }
+    th.sortable:hover { color: var(--ink); }
+    th.namn-col { text-align: left; padding-left: 14px; min-width: 140px; }
+    .sort-icon { font-style: normal; opacity: 0.5; margin-left: 3px; }
+
+    td {
+      padding: 10px 6px;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      vertical-align: middle;
+    }
+    td.namn-col {
+      text-align: left;
+      padding-left: 14px;
+      font-size: 13px;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+    }
+    td.totalt-col { padding: 10px 14px 10px 6px; font-size: 13px; }
+    tbody tr:not(:last-child) td { border-bottom: 1px solid var(--hair); }
+
+    tfoot tr td {
+      border-top: 2px solid var(--hair);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 11px 6px;
+    }
+    tfoot tr td.namn-col {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mute);
+      font-weight: 600;
+    }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      font-size: 10.5px;
+      color: var(--mute);
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<?
+  var omraden   = klassData.omraden;
+  var studenter = klassData.studenter;
+  var klassStats = klassData.klassStats;
+  var klassTotal = klassData.klassTotal;
+
+  function cellFarg(p) {
+    if (p === null || p === undefined) return null;
+    if (p < 50) return { bg: "#ecd5c5", text: "#7a3a26" };
+    if (p < 75) return { bg: "#efe1c1", text: "#6b5524" };
+    if (p < 90) return { bg: "#d4e2cc", text: "#2c5a40" };
+    return { bg: "#b8cdb4", text: "#1c4030" };
+  }
+
+  var starkast = null, svagast = null;
+  for (var o = 0; o < omraden.length; o++) {
+    var om = omraden[o];
+    var med = klassStats[om];
+    if (med === null) continue;
+    if (starkast === null || med > klassStats[starkast]) starkast = om;
+    if (svagast  === null || med < klassStats[svagast])  svagast  = om;
+  }
+?>
+
+<div class="header">
+  <div>
+    <div class="header-label">Grammatik · Klassöversikt</div>
+    <h1>Resultatöversikt</h1>
+  </div>
+  <div class="header-meta"><?= studenter.length ?> elever</div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="label">Klassmedel</div>
+    <div class="value big" style="color:var(--accent)">
+      <?= klassTotal !== null ? klassTotal : '—' ?><span class="unit">%</span>
+    </div>
+    <div class="sub">Medel över alla områden</div>
+  </div>
+  <? if (starkast) { ?>
+  <div class="stat-card">
+    <div class="label">Starkast område</div>
+    <div class="value" style="color:var(--accent)"><?= klassStats[starkast] ?><span class="unit">%</span></div>
+    <div class="sub"><?= starkast ?></div>
+  </div>
+  <? } ?>
+  <? if (svagast) { ?>
+  <div class="stat-card">
+    <div class="label">Träna mer</div>
+    <div class="value" style="color:var(--warn)"><?= klassStats[svagast] ?><span class="unit">%</span></div>
+    <div class="sub"><?= svagast ?></div>
+  </div>
+  <? } ?>
+  <div class="stat-card">
+    <div class="label">Elever</div>
+    <div class="value" style="color:var(--ink)"><?= studenter.length ?></div>
+    <div class="sub">i klassen</div>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table id="klass-table">
+    <thead>
+      <tr>
+        <th class="namn-col sortable" onclick="sortTable(0)">Elev <span class="sort-icon">↕</span></th>
+        <? for (var o = 0; o < omraden.length; o++) { ?>
+        <th class="sortable" onclick="sortTable(<?= o + 1 ?>)"><?= omraden[o] ?> <span class="sort-icon">↕</span></th>
+        <? } ?>
+        <th class="totalt-col sortable" onclick="sortTable(<?= omraden.length + 1 ?>)">Totalt <span class="sort-icon">↕</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <? for (var s = 0; s < studenter.length; s++) {
+        var elev = studenter[s];
+      ?>
+      <tr>
+        <td class="namn-col"><?= elev.namn ?></td>
+        <? for (var o = 0; o < omraden.length; o++) {
+          var p  = elev.omradeMedel[omraden[o]];
+          var cf = cellFarg(p);
+        ?>
+        <td style="<?= cf ? 'background:' + cf.bg + ';color:' + cf.text : 'color:#c9c5b8' ?>">
+          <?= p !== null ? p : '·' ?>
+        </td>
+        <? } ?>
+        <? var tf = cellFarg(elev.totalt); ?>
+        <td class="totalt-col" style="<?= tf ? 'background:' + tf.bg + ';color:' + tf.text : 'color:#c9c5b8' ?>; font-weight:600">
+          <?= elev.totalt !== null ? elev.totalt : '·' ?>
+        </td>
+      </tr>
+      <? } ?>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td class="namn-col">Klassmedel</td>
+        <? for (var o = 0; o < omraden.length; o++) {
+          var p  = klassStats[omraden[o]];
+          var cf = cellFarg(p);
+        ?>
+        <td style="<?= cf ? 'background:' + cf.bg + ';color:' + cf.text : 'color:#c9c5b8' ?>">
+          <?= p !== null ? p : '·' ?>
+        </td>
+        <? } ?>
+        <? var ktf = cellFarg(klassTotal); ?>
+        <td class="totalt-col" style="<?= ktf ? 'background:' + ktf.bg + ';color:' + ktf.text : 'color:#c9c5b8' ?>">
+          <?= klassTotal !== null ? klassTotal : '·' ?>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot" style="background:#ecd5c5"></span>0–49 · behöver träning</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#efe1c1"></span>50–74 · godkänt</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#d4e2cc"></span>75–89 · bra</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#b8cdb4"></span>90–100 · mycket bra</div>
+</div>
+
+<script>
+  var sortDir = {};
+  function sortTable(col) {
+    var table = document.getElementById('klass-table');
+    var tbody = table.querySelector('tbody');
+    var rows  = Array.from(tbody.querySelectorAll('tr'));
+    var asc   = !sortDir[col];
+    sortDir   = {};
+    sortDir[col] = asc;
+
+    rows.sort(function(a, b) {
+      var av = a.cells[col].textContent.trim();
+      var bv = b.cells[col].textContent.trim();
+      var an = parseFloat(av), bn = parseFloat(bv);
+      if (!isNaN(an) && !isNaN(bn)) return asc ? an - bn : bn - an;
+      return asc ? av.localeCompare(bv, 'sv') : bv.localeCompare(av, 'sv');
+    });
+
+    rows.forEach(function(r) { tbody.appendChild(r); });
+
+    table.querySelectorAll('th .sort-icon').forEach(function(icon, i) {
+      icon.textContent = i === col ? (asc ? '↑' : '↓') : '↕';
+    });
+  }
+</script>
+
+</body>
+</html>
