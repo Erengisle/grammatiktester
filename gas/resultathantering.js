@@ -372,3 +372,8 @@ function beraknaFarg(procent) {
   if (procent < 75) return FARG_GUL;
   return FARG_GRON;
 }
+
+// Kör den här för att uppdatera KLASSÖVERSIKT-fliken manuellt
+function uppdateraKlassoversiktManuellt() {
+  uppdateraKlassoversikt(SpreadsheetApp.getActiveSpreadsheet());
+}
