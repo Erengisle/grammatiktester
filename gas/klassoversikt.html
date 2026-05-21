@@ -132,6 +132,16 @@
     td.totalt-col { padding: 10px 14px 10px 6px; font-size: 13px; }
     tbody tr:not(:last-child) td { border-bottom: 1px solid var(--hair); }
 
+    td.lvl-none { color: #c9c5b8; }
+    td.lvl-red    { background: #ecd5c5; color: #7a3a26; }
+    td.lvl-yellow { background: #efe1c1; color: #6b5524; }
+    td.lvl-green  { background: #d4e2cc; color: #2c5a40; }
+    td.lvl-dark   { background: #b8cdb4; color: #1c4030; }
+    td.totalt-col.lvl-red,
+    td.totalt-col.lvl-yellow,
+    td.totalt-col.lvl-green,
+    td.totalt-col.lvl-dark { font-weight: 600; }
+
     tfoot tr td {
       border-top: 2px solid var(--hair);
       font-size: 12px;
@@ -172,12 +182,12 @@
   var klassStats = klassData.klassStats;
   var klassTotal = klassData.klassTotal;
 
-  function cellFarg(p) {
-    if (p === null || p === undefined) return null;
-    if (p < 50) return { bg: "#ecd5c5", text: "#7a3a26" };
-    if (p < 75) return { bg: "#efe1c1", text: "#6b5524" };
-    if (p < 90) return { bg: "#d4e2cc", text: "#2c5a40" };
-    return { bg: "#b8cdb4", text: "#1c4030" };
+  function cellKlass(p) {
+    if (p === null || p === undefined) return "lvl-none";
+    if (p < 50) return "lvl-red";
+    if (p < 75) return "lvl-yellow";
+    if (p < 90) return "lvl-green";
+    return "lvl-dark";
   }
 
   var starkast = null, svagast = null;
@@ -246,17 +256,15 @@
         <td class="namn-col"><?= elev.namn ?></td>
         <? for (var o = 0; o < omraden.length; o++) {
           var p        = elev.omradeMedel[omraden[o]];
-          var cf       = cellFarg(p);
-          var cellStyle = (cf ? 'background:' + cf.bg + ';color:' + cf.text : 'color:#c9c5b8');
-          var cellText  = (p !== null && p !== undefined) ? p : '·';
+          var cellKls  = cellKlass(p);
+          var cellText = (p !== null && p !== undefined) ? p : '·';
         ?>
-        <td style="<?!= cellStyle ?>"><?= cellText ?></td>
+        <td class="<?= cellKls ?>"><?= cellText ?></td>
         <? } ?>
-        <? var tf        = cellFarg(elev.totalt);
-           var tfStyle   = (tf ? 'background:' + tf.bg + ';color:' + tf.text : 'color:#c9c5b8') + ';font-weight:600';
-           var tfText    = (elev.totalt !== null && elev.totalt !== undefined) ? elev.totalt : '·';
+        <? var tfKls  = cellKlass(elev.totalt);
+           var tfText = (elev.totalt !== null && elev.totalt !== undefined) ? elev.totalt : '·';
         ?>
-        <td class="totalt-col" style="<?!= tfStyle ?>"><?= tfText ?></td>
+        <td class="totalt-col <?= tfKls ?>"><?= tfText ?></td>
       </tr>
       <? } ?>
     </tbody>
