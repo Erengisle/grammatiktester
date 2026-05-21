@@ -276,6 +276,24 @@ function skickaValkommen(email, namn, token) {
   });
 }
 
+// Skickar om resultatlänken till alla elever i Elever-fliken.
+// Kör den här om elever fått en trasig länk (t.ex. när WEBAPP_URL saknades).
+function skickaOmLankar() {
+  var ss     = SpreadsheetApp.getActiveSpreadsheet();
+  var elever = ss.getSheetByName("Elever").getDataRange().getValues();
+  var skickade = 0;
+  for (var i = 1; i < elever.length; i++) {
+    var email = elever[i][0] ? elever[i][0].toString().toLowerCase().trim() : "";
+    var namn  = elever[i][1] ? elever[i][1].toString() : "";
+    var token = elever[i][2] ? elever[i][2].toString() : "";
+    if (!email || !namn || !token) continue;
+    skickaValkommen(email, namn, token);
+    skickade++;
+    Utilities.sleep(300);
+  }
+  SpreadsheetApp.getUi().alert("Klart! Länk skickad till " + skickade + " elever.");
+}
+
 // ---------------------------------------------------------------------------
 // Klassöversikt
 // Byggs om helt från RESULTAT_LOGG vid varje anrop – robust och alltid korrekt
