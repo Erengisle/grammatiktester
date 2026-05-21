@@ -156,6 +156,73 @@
       font-weight: 600;
     }
 
+    /* ── Klickbart namn ── */
+    td.namn-col { cursor: pointer; }
+    td.namn-col:hover { text-decoration: underline; color: var(--accent); }
+
+    /* ── Modal ── */
+    .modal-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(28,31,29,0.45);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px 30px 24px;
+      width: min(680px, 94vw);
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .modal-header h2 { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; }
+    .modal-close {
+      background: none; border: none; cursor: pointer;
+      font-size: 20px; color: var(--mute); line-height: 1; padding: 0 0 0 12px;
+    }
+    .modal-close:hover { color: var(--ink); }
+    .modal-omrade { margin-bottom: 20px; }
+    .modal-omrade-rubrik {
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--mute); font-weight: 600; margin-bottom: 8px;
+    }
+    .modal-tests {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .modal-chip {
+      display: flex; flex-direction: column; align-items: center;
+      border-radius: 8px; padding: 8px 14px; min-width: 56px;
+      border: 1px solid var(--hair);
+    }
+    .modal-chip .chip-id  { font-size: 9px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.08em; }
+    .modal-chip .chip-val { font-size: 20px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; }
+    .modal-chip .chip-pct { font-size: 10px; color: var(--mute); }
+    .modal-chip.lvl-red    { background: #ecd5c5; border-color: #dfc4b2; }
+    .modal-chip.lvl-yellow { background: #efe1c1; border-color: #e2d1a8; }
+    .modal-chip.lvl-green  { background: #d4e2cc; border-color: #c0d4b6; }
+    .modal-chip.lvl-dark   { background: #b8cdb4; border-color: #a2bb9e; }
+    .modal-chip.lvl-red    .chip-val { color: #7a3a26; }
+    .modal-chip.lvl-yellow .chip-val { color: #6b5524; }
+    .modal-chip.lvl-green  .chip-val { color: #2c5a40; }
+    .modal-chip.lvl-dark   .chip-val { color: #1c4030; }
+    .modal-medel {
+      margin-top: 18px; padding-top: 14px;
+      border-top: 1px solid var(--hair);
+      display: flex; gap: 24px; flex-wrap: wrap;
+    }
+    .modal-medel-item .label { font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.08em; }
+    .modal-medel-item .val   { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+
     /* ── Legend ── */
     .legend {
       display: flex;
@@ -253,7 +320,7 @@
         var elev = studenter[s];
       ?>
       <tr>
-        <td class="namn-col"><?= elev.namn ?></td>
+        <td class="namn-col" onclick="visaElev(<?= s ?>)"><?= elev.namn ?></td>
         <? for (var o = 0; o < omraden.length; o++) {
           var p        = elev.omradeMedel[omraden[o]];
           var cellKls  = cellKlass(p);
@@ -293,7 +360,93 @@
   <div class="legend-item"><span class="legend-dot" style="background:#b8cdb4"></span>90–100 · mycket bra</div>
 </div>
 
+<!-- Modal -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="stangModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h2 id="modal-namn"></h2>
+      <button class="modal-close" onclick="stangModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+    <div class="modal-medel" id="modal-medel"></div>
+  </div>
+</div>
+
 <script>
+  var allelevData = <?!= JSON.stringify(studenter) ?>;
+
+  function cellKlassJS(p) {
+    if (p === null || p === undefined) return 'lvl-none';
+    if (p < 50) return 'lvl-red';
+    if (p < 75) return 'lvl-yellow';
+    if (p < 90) return 'lvl-green';
+    return 'lvl-dark';
+  }
+
+  function visaElev(idx) {
+    var elev = allelevData[idx];
+    document.getElementById('modal-namn').textContent = elev.namn;
+
+    // Gruppera tester per område
+    var perOmrade = {};
+    for (var i = 0; i < elev.tester.length; i++) {
+      var t = elev.tester[i];
+      if (!perOmrade[t.omrade]) perOmrade[t.omrade] = [];
+      perOmrade[t.omrade].push(t);
+    }
+
+    var bodyHtml = '';
+    var omraden = Object.keys(perOmrade).sort();
+    for (var o = 0; o < omraden.length; o++) {
+      var om = omraden[o];
+      bodyHtml += '<div class="modal-omrade">';
+      bodyHtml += '<div class="modal-omrade-rubrik">' + om + '</div>';
+      bodyHtml += '<div class="modal-tests">';
+      var tests = perOmrade[om];
+      for (var i = 0; i < tests.length; i++) {
+        var t = tests[i];
+        var kls = cellKlassJS(t.procent);
+        bodyHtml += '<div class="modal-chip ' + kls + '">';
+        bodyHtml += '<span class="chip-id">' + t.testId + '</span>';
+        bodyHtml += '<span class="chip-val">' + t.procent + '</span>';
+        bodyHtml += '<span class="chip-pct">%</span>';
+        bodyHtml += '</div>';
+      }
+      bodyHtml += '</div></div>';
+    }
+    document.getElementById('modal-body').innerHTML = bodyHtml;
+
+    // Medel-rad
+    var medelHtml = '';
+    for (var o = 0; o < omraden.length; o++) {
+      var om = omraden[o];
+      var med = elev.omradeMedel[om];
+      if (med === null) continue;
+      medelHtml += '<div class="modal-medel-item">';
+      medelHtml += '<div class="label">' + om + ' medel</div>';
+      medelHtml += '<div class="val" style="color:var(--accent)">' + med + '<span style="font-size:13px;color:var(--mute)">%</span></div>';
+      medelHtml += '</div>';
+    }
+    if (elev.totalt !== null) {
+      medelHtml += '<div class="modal-medel-item" style="margin-left:auto">';
+      medelHtml += '<div class="label">Totalt</div>';
+      medelHtml += '<div class="val" style="color:var(--ink)">' + elev.totalt + '<span style="font-size:13px;color:var(--mute)">%</span></div>';
+      medelHtml += '</div>';
+    }
+    document.getElementById('modal-medel').innerHTML = medelHtml;
+
+    document.getElementById('modal-backdrop').classList.add('open');
+  }
+
+  function stangModal(event) {
+    if (event && event.target !== document.getElementById('modal-backdrop')) return;
+    document.getElementById('modal-backdrop').classList.remove('open');
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') document.getElementById('modal-backdrop').classList.remove('open');
+  });
+
   var sortDir = {};
   function sortTable(col) {
     var table = document.getElementById('klass-table');

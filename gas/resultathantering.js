@@ -186,10 +186,23 @@ function hamtaKlassData(ss) {
       if (med !== null) { totalSum += med; totalCount++; }
     }
 
+    // Individuella testresultat sorterade per område och testnummer
+    var tester = [];
+    for (var testId in elevData) {
+      var num = parseInt(testId.replace(/[^0-9]/g, '')) || 1;
+      tester.push({ testId: testId, omrade: elevData[testId].omrade, procent: elevData[testId].procent, num: num });
+    }
+    tester.sort(function(a, b) {
+      if (a.omrade < b.omrade) return -1;
+      if (a.omrade > b.omrade) return 1;
+      return a.num - b.num;
+    });
+
     studenter.push({
       namn:        namn,
       omradeMedel: omradeMedel,
-      totalt:      totalCount > 0 ? Math.round(totalSum / totalCount) : null
+      totalt:      totalCount > 0 ? Math.round(totalSum / totalCount) : null,
+      tester:      tester
     });
   }
 
