@@ -205,7 +205,7 @@
     <div class="header-label">Grammatik · Klassöversikt</div>
     <h1>Resultatöversikt</h1>
   </div>
-  <div class="header-meta"><?= studenter.length ?> elever · v<?= new Date().toISOString().slice(0,16).replace('T',' ') ?></div>
+  <div class="header-meta"><?= studenter.length ?> elever</div>
 </div>
 
 <div class="stat-grid">
@@ -292,11 +292,6 @@
   <div class="legend-item"><span class="legend-dot" style="background:#d4e2cc"></span>75–89 · bra</div>
   <div class="legend-item"><span class="legend-dot" style="background:#b8cdb4"></span>90–100 · mycket bra</div>
 </div>
-
-<details style="margin-top:20px;font-size:11px;color:#999">
-  <summary style="cursor:pointer">Felsökning (klicka för att visa rådata)</summary>
-  <pre style="margin-top:8px;padding:12px;background:#fff;border:1px solid #ece8de;border-radius:8px;overflow-x:auto;font-size:10px"><?= JSON.stringify({ omraden: omraden, studenter: studenter, klassStats: klassStats, klassTotal: klassTotal }, null, 2) ?></pre>
-</details>
 
 <script>
   var sortDir = {};
