@@ -245,15 +245,20 @@
       <tr>
         <td class="namn-col"><?= elev.namn ?></td>
         <? for (var o = 0; o < omraden.length; o++) {
-          var p  = elev.omradeMedel[omraden[o]];
-          var cf = cellFarg(p);
+          var p       = elev.omradeMedel[omraden[o]];
+          var cf      = cellFarg(p);
+          var bgStyle = cf ? 'background:' + cf.bg + ';' : '';
+          var txtCol  = cf ? cf.text : '#c9c5b8';
         ?>
-        <td style="<?= cf ? 'background:' + cf.bg + ';color:' + cf.text : 'color:#c9c5b8' ?>">
+        <td style="<?= bgStyle ?>color:<?= txtCol ?>">
           <?= p !== null ? p : '·' ?>
         </td>
         <? } ?>
-        <? var tf = cellFarg(elev.totalt); ?>
-        <td class="totalt-col" style="<?= tf ? 'background:' + tf.bg + ';color:' + tf.text : 'color:#c9c5b8' ?>; font-weight:600">
+        <? var tf      = cellFarg(elev.totalt);
+           var tfBg    = tf ? 'background:' + tf.bg + ';' : '';
+           var tfColor = tf ? tf.text : '#c9c5b8';
+        ?>
+        <td class="totalt-col" style="<?= tfBg ?>color:<?= tfColor ?>;font-weight:600">
           <?= elev.totalt !== null ? elev.totalt : '·' ?>
         </td>
       </tr>
@@ -263,15 +268,20 @@
       <tr>
         <td class="namn-col">Klassmedel</td>
         <? for (var o = 0; o < omraden.length; o++) {
-          var p  = klassStats[omraden[o]];
-          var cf = cellFarg(p);
+          var p       = klassStats[omraden[o]];
+          var cf      = cellFarg(p);
+          var bgStyle = cf ? 'background:' + cf.bg + ';' : '';
+          var txtCol  = cf ? cf.text : '#c9c5b8';
         ?>
-        <td style="<?= cf ? 'background:' + cf.bg + ';color:' + cf.text : 'color:#c9c5b8' ?>">
+        <td style="<?= bgStyle ?>color:<?= txtCol ?>">
           <?= p !== null ? p : '·' ?>
         </td>
         <? } ?>
-        <? var ktf = cellFarg(klassTotal); ?>
-        <td class="totalt-col" style="<?= ktf ? 'background:' + ktf.bg + ';color:' + ktf.text : 'color:#c9c5b8' ?>">
+        <? var ktf      = cellFarg(klassTotal);
+           var ktfBg    = ktf ? 'background:' + ktf.bg + ';' : '';
+           var ktfColor = ktf ? ktf.text : '#c9c5b8';
+        ?>
+        <td class="totalt-col" style="<?= ktfBg ?>color:<?= ktfColor ?>">
           <?= klassTotal !== null ? klassTotal : '·' ?>
         </td>
       </tr>
