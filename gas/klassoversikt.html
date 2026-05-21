@@ -250,13 +250,13 @@
           var cellStyle = (cf ? 'background:' + cf.bg + ';color:' + cf.text : 'color:#c9c5b8');
           var cellText  = (p !== null && p !== undefined) ? p : '·';
         ?>
-        <td style="<?= cellStyle ?>"><?= cellText ?></td>
+        <td style="<?!= cellStyle ?>"><?= cellText ?></td>
         <? } ?>
         <? var tf        = cellFarg(elev.totalt);
            var tfStyle   = (tf ? 'background:' + tf.bg + ';color:' + tf.text : 'color:#c9c5b8') + ';font-weight:600';
            var tfText    = (elev.totalt !== null && elev.totalt !== undefined) ? elev.totalt : '·';
         ?>
-        <td class="totalt-col" style="<?= tfStyle ?>"><?= tfText ?></td>
+        <td class="totalt-col" style="<?!= tfStyle ?>"><?= tfText ?></td>
       </tr>
       <? } ?>
     </tbody>
