@@ -268,20 +268,13 @@
       <tr>
         <td class="namn-col">Klassmedel</td>
         <? for (var o = 0; o < omraden.length; o++) {
-          var p       = klassStats[omraden[o]];
-          var cf      = cellFarg(p);
-          var bgStyle = cf ? 'background:' + cf.bg + ';' : '';
-          var txtCol  = cf ? cf.text : '#c9c5b8';
+          var p = klassStats[omraden[o]];
         ?>
-        <td style="<?= bgStyle ?>color:<?= txtCol ?>">
+        <td>
           <?= p !== null ? p : '·' ?>
         </td>
         <? } ?>
-        <? var ktf      = cellFarg(klassTotal);
-           var ktfBg    = ktf ? 'background:' + ktf.bg + ';' : '';
-           var ktfColor = ktf ? ktf.text : '#c9c5b8';
-        ?>
-        <td class="totalt-col" style="<?= ktfBg ?>color:<?= ktfColor ?>">
+        <td class="totalt-col">
           <?= klassTotal !== null ? klassTotal : '·' ?>
         </td>
       </tr>
