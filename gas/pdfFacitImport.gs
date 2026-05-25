@@ -12,7 +12,8 @@
  * Kör via: 📝 Formulär → Importera PDF-facit
  */
 
-var PDF_FILNAMN = "Form i fokus  B FACIT (1).pdf";
+var PDF_FILNAMN    = "Form i fokus  B FACIT (1).pdf";
+var PDF_MAPP_ID    = "1ro-cCTIcwdIgi556SFFIDQsuPr4XbKcD";
 var FACIT_PDF_FLIK = "FACIT_PDF";
 
 function onOpen() {
@@ -25,9 +26,13 @@ function onOpen() {
 }
 
 function hämtaAlltFacitFrånPDF() {
-  var filer = DriveApp.getFilesByName(PDF_FILNAMN);
+  var mapp  = DriveApp.getFolderById(PDF_MAPP_ID);
+  var filer = mapp.getFilesByName(PDF_FILNAMN);
   if (!filer.hasNext()) {
-    SpreadsheetApp.getUi().alert('Filen "' + PDF_FILNAMN + '" hittades inte i Drive.');
+    SpreadsheetApp.getUi().alert(
+      'Filen "' + PDF_FILNAMN + '" hittades inte i mappen.\n' +
+      'Kontrollera att filnamnet stämmer exakt.'
+    );
     return;
   }
   var pdfFil = filer.next();
