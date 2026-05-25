@@ -2,17 +2,18 @@
  * Skript: PDF-facit-importerare
  *
  * Kör fyllFacitPDF() en gång för att fylla fliken "FACIT_PDF" med
- * adjektiv-svaren ur Form i fokus B FACIT.
+ * alla svar ur Form i fokus B FACIT (Verb, Pronomen, Adjektiv,
+ * Adverb, Konjunktioner, Prepositioner).
  *
- * OBS: Data är manuellt rensad från PDF:en eftersom PDF-layouten
- * har flera kolumner per sida som blandas vid automatisk textutläsning.
+ * Data finns i facitData.gs. PDF:ens flerkolumnslayout gör automatisk
+ * textutläsning opålitlig — data är manuellt rensad därifrån.
  *
  * Kolumner i FACIT_PDF:
  *   A: Övning (t.ex. "2 Adjektiv och substantiv - A och B")
  *   B: Nr     (t.ex. 2, 3, 4 ...)
  *   C: Svar   (t.ex. "lediga arbeten")
  *
- * Kör via: 📝 Formulär → Fyll FACIT_PDF
+ * Kör via: 📝 Formulär → Fyll FACIT_PDF (alla ämnen)
  */
 
 var FACIT_PDF_FLIK = "FACIT_PDF";
@@ -25,7 +26,7 @@ function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu("📝 Formulär")
     .addItem("Skapa nytt formulär", "skapaFormular")
-    .addItem("Fyll FACIT_PDF (Adjektiv)", "fyllFacitPDF")
+    .addItem("Fyll FACIT_PDF (alla ämnen)", "fyllFacitPDF")
     .addItem("Kopiera facit till flik...", "kopieraFacitDialog")
     .addToUi();
 }
@@ -180,17 +181,31 @@ function fyllFacitPDF() {
   sheet.clearContents();
   sheet.clearFormats();
 
-  var rubrik = [["Övning", "Nr", "Svar"]];
-  sheet.getRange(1, 1, 1, 3).setValues(rubrik);
+  sheet.getRange(1, 1, 1, 3).setValues([["Övning", "Nr", "Svar"]]);
   sheet.getRange(1, 1, 1, 3).setFontWeight("bold");
 
+  // Samla data från alla ämnen i facitData.gs
+  var allaSektioner = [
+    { prefix: "VERB – ",          data: VERB_FACIT },
+    { prefix: "PRONOMEN – ",      data: PRONOMEN_FACIT },
+    { prefix: "ADJEKTIV – ",      data: ADJEKTIV_FACIT },
+    { prefix: "ADJEKTIV – ",      data: ADJEKTIV_EXTRA_FACIT },
+    { prefix: "ADVERB – ",        data: ADVERB_FACIT },
+    { prefix: "KONJUNKTIONER – ", data: KONJUNKTIONER_FACIT },
+    { prefix: "PREPOSITIONER – ", data: PREPOSITIONER_FACIT }
+  ];
+
   var rader = [];
-  var övningar = Object.keys(ADJEKTIV_FACIT);
-  for (var i = 0; i < övningar.length; i++) {
-    var övning = övningar[i];
-    var svar   = ADJEKTIV_FACIT[övning];
-    for (var j = 0; j < svar.length; j++) {
-      rader.push([övning, svar[j][0], svar[j][1]]);
+  for (var s = 0; s < allaSektioner.length; s++) {
+    var prefix   = allaSektioner[s].prefix;
+    var dataobjekt = allaSektioner[s].data;
+    var övningar = Object.keys(dataobjekt);
+    for (var i = 0; i < övningar.length; i++) {
+      var övning = prefix + övningar[i];
+      var svar   = dataobjekt[övningar[i]];
+      for (var j = 0; j < svar.length; j++) {
+        rader.push([övning, svar[j][0], svar[j][1]]);
+      }
     }
   }
 
@@ -199,7 +214,7 @@ function fyllFacitPDF() {
   }
 
   SpreadsheetApp.getUi().alert(
-    "Klart! " + rader.length + " adjektiv-svar skrivna till " + FACIT_PDF_FLIK + ".\n\n" +
+    "Klart! " + rader.length + " svar skrivna till " + FACIT_PDF_FLIK + ".\n\n" +
     "Använd sedan \"Kopiera facit till flik...\" för att fylla en facitflik."
   );
 }
