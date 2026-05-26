@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grammatiktester – Systemöversikt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #f4f1ea;
+      --surface: #ffffff;
+      --ink:     #1c1f1d;
+      --mute:    #7a7a76;
+      --hair:    #ece8de;
+      --accent:  #3a6b54;
+      --warn:    #a86a3e;
+      --info:    #3a5b8c;
+      --purple:  #5a3a8c;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.7;
+      padding: 0 0 80px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--accent);
+      color: #fff;
+      padding: 56px 40px 48px;
+      margin-bottom: 48px;
+    }
+    .hero-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .hero h1 {
+      font-size: 36px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .hero p {
+      font-size: 15px;
+      opacity: 0.85;
+      max-width: 620px;
+      line-height: 1.6;
+    }
+    .hero-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    .chip {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 99px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      background: var(--surface);
+      border: 1px solid var(--hair);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 48px;
+    }
+    .nav h3 {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mute);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .nav ol {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 24px;
+    }
+    @media (max-width: 540px) { .nav ol { grid-template-columns: 1fr; } }
+    .nav ol li a {
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .nav ol li a:hover { text-decoration: underline; }
+    .nav ol li::before {
+      content: attr(data-n) ". ";
+      color: var(--mute);
+      font-size: 12px;
+    }
+
+    /* ── Sections ── */
+    section { margin-bottom: 60px; }
+    section h2 {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--hair);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    section h2 .icon {
+      width: 34px; height: 34px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    section h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 28px 0 10px;
+      color: var(--ink);
+    }
+    section p { font-size: 14px; color: var(--ink); margin-bottom: 12px; }
+    section ul, section ol {
+      font-size: 14px;
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+    section li { margin-bottom: 6px; }
+    section li::marker { color: var(--accent); }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--hair);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 14px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card p { margin-bottom: 0; font-size: 13px; color: var(--mute); line-height: 1.6; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 16px 0;
+    }
+    .card-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin: 16px 0;
+    }
+    @media (max-width: 600px) {
+      .card-grid, .card-grid-3 { grid-template-columns: 1fr; }
+    }
+
+    /* ── Callouts ── */
+    .callout {
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 13.5px;
+      line-height: 1.6;
+      display: flex;
+      gap: 12px;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; line-height: 1.5; }
+    .callout.tip  { background: #e8f0eb; border-left: 3px solid var(--accent); }
+    .callout.warn { background: #f3e8de; border-left: 3px solid var(--warn); }
+    .callout.info { background: #e0e9f5; border-left: 3px solid var(--info); }
+
+    /* ── Tables ── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--hair);
+      border-radius: 12px;
+      overflow: hidden;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+    table { width: 100%; border-collapse: collapse; min-width: 400px; }
+    th {
+      background: #fafaf6;
+      padding: 10px 16px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mute);
+      text-align: left;
+      border-bottom: 1px solid var(--hair);
+    }
+    td {
+      padding: 11px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--hair);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+    tr:last-child td { border-bottom: none; }
+    td:first-child { font-weight: 600; white-space: nowrap; }
+    td code {
+      font-family: 'Menlo', 'Monaco', monospace;
+      background: #f0ede6;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      white-space: nowrap;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 99px;
+      letter-spacing: 0.04em;
+    }
+    .badge-green  { background: #d4edda; color: #2d6a3f; }
+    .badge-blue   { background: #d4e3f5; color: #1f4a7a; }
+    .badge-orange { background: #fce8d4; color: #7a3a10; }
+
+    /* ── File badge ── */
+    .file-badge {
+      display: inline-block;
+      background: #e8f0eb;
+      color: var(--accent);
+      font-family: 'Menlo', 'Monaco', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* ── Flow diagram ── */
+    .flow-diagram {
+      background: var(--surface);
+      border: 1px solid var(--hair);
+      border-radius: 12px;
+      padding: 28px 24px;
+      margin: 20px 0;
+    }
+    .flow-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      row-gap: 10px;
+      margin-bottom: 8px;
+    }
+    .flow-row:last-child { margin-bottom: 0; }
+    .flow-node {
+      background: var(--bg);
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 12.5px;
+      font-weight: 500;
+      text-align: center;
+      min-width: 110px;
+      line-height: 1.4;
+    }
+    .flow-node.accent {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .flow-node.light {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .flow-arrow {
+      color: var(--mute);
+      font-size: 16px;
+      padding: 0 8px;
+      flex-shrink: 0;
+    }
+    .flow-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mute);
+      font-weight: 600;
+      margin: 16px 0 8px;
+    }
+
+    /* ── Resource map ── */
+    .resource-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 20px 0;
+    }
+    @media (max-width: 600px) { .resource-grid { grid-template-columns: 1fr; } }
+    .resource-card {
+      background: var(--surface);
+      border: 1px solid var(--hair);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .resource-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .resource-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .resource-where {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .resource-desc {
+      font-size: 12.5px;
+      color: var(--mute);
+      line-height: 1.6;
+    }
+
+    /* ── Sheet list ── */
+    .sheet-list {
+      list-style: none;
+      padding: 0;
+    }
+    .sheet-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--hair);
+      font-size: 13px;
+    }
+    .sheet-list li:last-child { border-bottom: none; }
+    .sheet-name {
+      font-family: 'Menlo', 'Monaco', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--accent);
+      white-space: nowrap;
+      min-width: 140px;
+    }
+    .sheet-desc { color: var(--mute); line-height: 1.5; }
+
+    /* ── Script files ── */
+    .script-list { list-style: none; padding: 0; }
+    .script-item {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 0;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      background: var(--surface);
+    }
+    @media (max-width: 560px) { .script-item { grid-template-columns: 1fr; } }
+    .script-name {
+      background: #f5f3ee;
+      padding: 14px 16px;
+      font-family: 'Menlo', 'Monaco', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--accent);
+      border-right: 1px solid var(--hair);
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .script-role {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--mute);
+    }
+    .script-desc {
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--mute);
+      line-height: 1.6;
+    }
+
+    /* ── Facit workflow ── */
+    .facit-steps {
+      list-style: none;
+      padding: 0;
+      counter-reset: step;
+    }
+    .facit-step {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+      align-items: start;
+    }
+    .facit-step-num {
+      width: 32px; height: 32px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .facit-step-content { padding-top: 4px; }
+    .facit-step-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .facit-step-desc {
+      font-size: 13px;
+      color: var(--mute);
+      line-height: 1.6;
+    }
+
+    /* ── Subject chips ── */
+    .subject-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .subject-chip {
+      background: var(--surface);
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .subject-chip .s-name { font-weight: 700; color: var(--ink); }
+    .subject-chip .s-count { color: var(--mute); font-size: 11px; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--mute);
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--hair);
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="container">
+    <div class="hero-label">Systemöversikt</div>
+    <h1>Grammatiktester<br>Hur systemet är byggt</h1>
+    <p>Ett automatiserat system för grammatiktestning i svenska som andraspråk. Läraren skapar test i ett kalkylark, elever svarar via Google Formulär och systemet rättar, loggar och presenterar resultaten automatiskt.</p>
+    <div class="hero-chips">
+      <span class="chip">Google Kalkylark</span>
+      <span class="chip">Google Formulär</span>
+      <span class="chip">Apps Script</span>
+      <span class="chip">Webbapp</span>
+      <span class="chip">Form i fokus B</span>
+      <span class="chip">GitHub</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="nav">
+    <h3>Innehåll</h3>
+    <ol>
+      <li data-n="1"><a href="#oversikt">Vad systemet gör</a></li>
+      <li data-n="2"><a href="#resurser">Resurser och var de finns</a></li>
+      <li data-n="3"><a href="#kalkylark">Master-kalkylarket</a></li>
+      <li data-n="4"><a href="#skript">Apps Script-filerna</a></li>
+      <li data-n="5"><a href="#flode">Flödet – steg för steg</a></li>
+      <li data-n="6"><a href="#facit">Facit-systemet</a></li>
+      <li data-n="7"><a href="#webbappar">Webbapparna</a></li>
+      <li data-n="8"><a href="#stack">Teknisk stack</a></li>
+    </ol>
+  </div>
+
+  <!-- 1. Vad systemet gör -->
+  <section id="oversikt">
+    <h2><span class="icon">📋</span> Vad systemet gör</h2>
+    <p>Systemet låter en lärare skapa grammatiktest, låta elever svara via en länk, och sedan automatiskt rätta och presentera resultaten – utan att läraren behöver göra något manuellt efter att ett test är skapat.</p>
+
+    <div class="card-grid-3">
+      <div class="card">
+        <div class="card-title">📝 Skapa test</div>
+        <p>Läraren fyller i frågor i ett kalkylark och klickar på en knapp. Ett Google Formulär skapas automatiskt.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">✅ Automatisk rättning</div>
+        <p>När en elev lämnar in rättas svaren mot ett facit. Resultatet loggas direkt i kalkylarket.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 Resultatvyer</div>
+        <p>Varje elev har en personlig webbsida med sina resultat. Läraren har en klassöversikt.</p>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <span>Systemet är kopplat till läroboken <strong>Form i fokus B</strong>. Facitsvaren för alla grammatikövningar (verb, pronomen, adjektiv, adverb, konjunktioner och prepositioner) är inbyggda och kan kopieras till rätt facitflik med ett knapptryck.</span>
+    </div>
+  </section>
+
+  <!-- 2. Resurser -->
+  <section id="resurser">
+    <h2><span class="icon">🗺️</span> Resurser och var de finns</h2>
+    <p>Systemet består av sex delar som samverkar. Allt utom GitHub lever i lärarens Google-konto.</p>
+
+    <div class="resource-grid">
+      <div class="resource-card">
+        <span class="resource-icon">📊</span>
+        <div class="resource-title">Master-kalkylarket</div>
+        <div class="resource-where">Google Drive</div>
+        <div class="resource-desc">Det centrala navet. Innehåller elevlistan, testregistret, resultatloggen, klassöversikten och alla facitflikar. All konfiguration sker här.</div>
+      </div>
+      <div class="resource-card">
+        <span class="resource-icon">📋</span>
+        <div class="resource-title">Google Formulär</div>
+        <div class="resource-where">Google Drive – angiven mapp</div>
+        <div class="resource-desc">Ett formulär per test. Skapas automatiskt av skriptet och kopplas manuellt till Master-kalkylarket. Eleverna svarar via formulärlänken.</div>
+      </div>
+      <div class="resource-card">
+        <span class="resource-icon">⚙️</span>
+        <div class="resource-title">Apps Script</div>
+        <div class="resource-where">Inuti Master-kalkylarket</div>
+        <div class="resource-desc">Koden som driver allt: skapar formulär, rättar svar, loggar resultat, skickar mejl och tillhandahåller webbapparna. Fem skriptfiler.</div>
+      </div>
+      <div class="resource-card">
+        <span class="resource-icon">🌐</span>
+        <div class="resource-title">Webbapp</div>
+        <div class="resource-where">Publicerad via Apps Script</div>
+        <div class="resource-desc">Två distributioner: en för elever (öppen länk med token) och en för läraren (inloggning krävs, visar klassöversikt).</div>
+      </div>
+      <div class="resource-card">
+        <span class="resource-icon">📖</span>
+        <div class="resource-title">Facit-data (Form i fokus B)</div>
+        <div class="resource-where">Inbyggt i skriptet (facitData.gs)</div>
+        <div class="resource-desc">Manuellt rensade svar från PDF-facitet. Täcker ~650 svar inom verb, pronomen, adjektiv, adverb, konjunktioner och prepositioner.</div>
+      </div>
+      <div class="resource-card">
+        <span class="resource-icon">🐙</span>
+        <div class="resource-title">GitHub-repo</div>
+        <div class="resource-where">github.com/erengisle/grammatiktester</div>
+        <div class="resource-desc">Versionshantering av all kod. Skriptfilerna kopieras härifrån till Apps Script. PDF-facitet och Master-kalkylarket sparas också här som backup.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Kalkylark -->
+  <section id="kalkylark">
+    <h2><span class="icon">📊</span> Master-kalkylarket</h2>
+    <p>Kalkylarket är systemets databas och konfigurationsfil. Det innehåller ett antal flikar med olika roller:</p>
+
+    <h3>Konfigurationsflikar (läraren redigerar)</h3>
+    <ul class="sheet-list">
+      <li>
+        <span class="sheet-name">Frågor</span>
+        <span class="sheet-desc">Frågorna till nästa test. Kolumn A = frågetext. Rensas och fylls på inför varje nytt test. Formulärsskaparen läser härifrån.</span>
+      </li>
+      <li>
+        <span class="sheet-name">Elever</span>
+        <span class="sheet-desc">En rad per elev: <code>A: e-post</code> &nbsp; <code>B: namn</code> &nbsp; <code>C: token</code> (fylls i automatiskt). Läggs till av läraren innan eleverna börjar.</span>
+      </li>
+      <li>
+        <span class="sheet-name">Testregister</span>
+        <span class="sheet-desc">En rad per test: <code>A: TestID</code> &nbsp; <code>B: Område</code> &nbsp; <code>C: Facitflik</code> &nbsp; <code>D: Svarssheet</code>. Kopplar ihop formulär, facit och svarsflik.</span>
+      </li>
+      <li>
+        <span class="sheet-name">FACIT_Adj01 … FACIT_Pre05</span>
+        <span class="sheet-desc">En facitflik per test. Ingen rubrikrad. Kolumn A = frågenummer (valfritt), kolumn B = rätt svar. Fylls med hjälp av facit-skriptet.</span>
+      </li>
+    </ul>
+
+    <h3>Automatiska flikar (rör aldrig manuellt)</h3>
+    <ul class="sheet-list">
+      <li>
+        <span class="sheet-name">RESULTAT_LOGG</span>
+        <span class="sheet-desc">Alla inlämningar. En rad per inlämning: tidsstämpel, e-post, TestID, område, procent, antal rätt, totalt antal. Byggs på automatiskt.</span>
+      </li>
+      <li>
+        <span class="sheet-name">KLASSÖVERSIKT</span>
+        <span class="sheet-desc">Aggregerad vy per elev och område. Byggs om helt från RESULTAT_LOGG vid varje inlämning. Färgkodad: rött &lt;50%, gult 50–74%, grönt ≥75%.</span>
+      </li>
+      <li>
+        <span class="sheet-name">[Formulärnamn] (svar)</span>
+        <span class="sheet-desc">Skapas av Google när du kopplar formuläret till kalkylarket. En flik per formulär. Skriptet läser svar härifrån.</span>
+      </li>
+    </ul>
+
+    <h3>Facit-referensflik</h3>
+    <ul class="sheet-list">
+      <li>
+        <span class="sheet-name">FACIT_PDF</span>
+        <span class="sheet-desc">Alla svar ur Form i fokus B, strukturerade som: <code>A: Övning</code> &nbsp; <code>B: Nr</code> &nbsp; <code>C: Svar</code>. Används som källdata när läraren ska fylla en facitflik. Fylls med ett menyval.</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- 4. Skript -->
+  <section id="skript">
+    <h2><span class="icon">⚙️</span> Apps Script-filerna</h2>
+    <p>Koden lever i fem <code>.gs</code>-filer (och två HTML-filer) inuti Apps Script-projektet som är kopplat till Master-kalkylarket. Källkoden finns i GitHub-repot under <code>gas/</code>.</p>
+
+    <div class="script-item">
+      <div class="script-name">
+        formularskapare.gs
+        <span class="script-role">Manuell</span>
+      </div>
+      <div class="script-desc">Skapar ett Google Formulär från fliken "Frågor". Körs via menyn <strong>📝 Formulär → Skapa nytt formulär</strong>. Lägger formuläret i en angiven Drive-mapp och visar en dialog med redigerings- och publiceringslänk.</div>
+    </div>
+
+    <div class="script-item">
+      <div class="script-name">
+        resultathantering.gs
+        <span class="script-role">Automatisk trigger</span>
+      </div>
+      <div class="script-desc">Triggas automatiskt av Google varje gång ett formulär skickas in (<code>onFormSubmit</code>). Slår upp rätt facitflik via Testregistret, jämför elevens svar, loggar resultatet i RESULTAT_LOGG, uppdaterar KLASSÖVERSIKT och skickar välkomstmejl med personlig länk första gången en elev svarar.</div>
+    </div>
+
+    <div class="script-item">
+      <div class="script-name">
+        webbapp.gs
+        <span class="script-role">Publicerad webbapp</span>
+      </div>
+      <div class="script-desc">Hanterar HTTP-anrop till den publicerade webbappen. Visar elevens personliga resultatsida (<code>?token=…</code>) eller lärarens klassöversikt (<code>?view=klass</code>) beroende på URL-parametrar. Renderar HTML-mallarna <code>webbapp1.html</code> och <code>klassoversikt.html</code>.</div>
+    </div>
+
+    <div class="script-item">
+      <div class="script-name">
+        pdfFacitImport.gs
+        <span class="script-role">Manuell</span>
+      </div>
+      <div class="script-desc">Fyller fliken FACIT_PDF med alla svar ur Form i fokus B (hämtar data från <code>facitData.gs</code>). Körs via menyn <strong>📝 Formulär → Fyll FACIT_PDF (alla ämnen)</strong>. Behöver bara köras en gång, eller om data behöver återställas.</div>
+    </div>
+
+    <div class="script-item">
+      <div class="script-name">
+        facitData.gs
+        <span class="script-role">Data</span>
+      </div>
+      <div class="script-desc">Innehåller alla ~650 svar ur Form i fokus B som hårdkodade JavaScript-objekt. Täcker Verb (övn. 5, 10–14, 19, 21–23, 25, 29, 34), Pronomen (övn. 6, 10, 11, 21, 23, 24, 27, 28), Adjektiv (övn. 2–4, 7a, 7b, 8, 10–12), Adverb (övn. 3, 8–11, 15, 17), Konjunktioner (övn. 2) och Prepositioner (övn. 1a–1e).</div>
+    </div>
+
+    <div class="script-item">
+      <div class="script-name">
+        facitLänk.gs
+        <span class="script-role">Manuell</span>
+      </div>
+      <div class="script-desc">Kopierar rätt svar från FACIT_PDF till en namngiven facitflik. Körs via menyn <strong>📝 Formulär → Kopiera facit till flik…</strong>. Visar en dialog där läraren väljer övning och anger målflik (t.ex. <code>FACIT_Adj01</code>). Svaren skrivs i det format som rättningsskriptet förväntar sig.</div>
+    </div>
+  </section>
+
+  <!-- 5. Flödet -->
+  <section id="flode">
+    <h2><span class="icon">🔄</span> Flödet – steg för steg</h2>
+
+    <h3>Lärarens arbetsflöde (en gång per test)</h3>
+    <div class="flow-diagram">
+      <div class="flow-label">Läraren</div>
+      <div class="flow-row">
+        <div class="flow-node accent">Fyller i<br>fliken Frågor</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Kör "Skapa<br>nytt formulär"</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Kopplar formuläret<br>till kalkylarket</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Fyller facitfliken<br>(via facit-dialogen)</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Lägger till<br>i Testregister</div>
+      </div>
+      <div class="flow-row" style="margin-top:10px;">
+        <div class="flow-node light">Delar formulärlänken med eleverna</div>
+      </div>
+    </div>
+
+    <h3>Vad som händer när en elev svarar (automatiskt)</h3>
+    <div class="flow-diagram">
+      <div class="flow-label">Elev + System</div>
+      <div class="flow-row">
+        <div class="flow-node accent">Elev skickar<br>in formulär</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">onFormSubmit<br>aktiveras</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Testregister<br>slås upp</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Svar rättas<br>mot facitflik</div>
+      </div>
+      <div class="flow-row" style="margin-top:8px;">
+        <div class="flow-node" style="opacity:0;pointer-events:none;min-width:110px"></div>
+        <div class="flow-arrow" style="opacity:0">→</div>
+        <div class="flow-node">Loggas i<br>RESULTAT_LOGG</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">KLASSÖVERSIKT<br>byggs om</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node light">Välkomstmejl +<br>token (1:a gången)</div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <span>Rättningen är skiftlägesokänslig – "stor" och "Stor" räknas som lika. Om en elev lämnar in flera gånger sparas det bästa resultatet per test.</span>
+    </div>
+
+    <h3>Elevens upplevelse</h3>
+    <div class="flow-diagram">
+      <div class="flow-row">
+        <div class="flow-node accent">Tar emot länk<br>via mejl</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Öppnar personlig<br>resultatsida</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Ser alla test,<br>procent och medel</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node light">Länken fungerar<br>för alla framtida test</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Facit-systemet -->
+  <section id="facit">
+    <h2><span class="icon">📖</span> Facit-systemet</h2>
+    <p>En central utmaning är att fylla facitflikarna med rätt svar för varje test. Systemet löser detta med en tvåstegsprocess kopplad till Form i fokus B.</p>
+
+    <h3>Hur det fungerar</h3>
+    <ol class="facit-steps">
+      <li class="facit-step">
+        <div class="facit-step-num">1</div>
+        <div class="facit-step-content">
+          <div class="facit-step-title">Fyll FACIT_PDF (görs en gång)</div>
+          <div class="facit-step-desc">Kör <strong>📝 Formulär → Fyll FACIT_PDF (alla ämnen)</strong>. Fliken FACIT_PDF skapas med alla svar ur Form i fokus B, organiserade med kolumnerna <code>Övning | Nr | Svar</code>.</div>
+        </div>
+      </li>
+      <li class="facit-step">
+        <div class="facit-step-num">2</div>
+        <div class="facit-step-content">
+          <div class="facit-step-title">Kopiera rätt svar till facitfliken</div>
+          <div class="facit-step-desc">Kör <strong>📝 Formulär → Kopiera facit till flik…</strong>. Välj övning (t.ex. "ADJEKTIV – 2 Adjektiv och substantiv - A och B") och ange målflik (t.ex. <code>FACIT_Adj01</code>). Svaren kopieras automatiskt i rätt format.</div>
+        </div>
+      </li>
+      <li class="facit-step">
+        <div class="facit-step-num">3</div>
+        <div class="facit-step-content">
+          <div class="facit-step-title">Registrera i Testregister</div>
+          <div class="facit-step-desc">Lägg till en rad i Testregister-fliken med TestID, Område, facitflikens namn och svarssheetens namn. Nu är testet klart att ta emot inlämningar.</div>
+        </div>
+      </li>
+    </ol>
+
+    <h3>Vad som finns i facit-datan</h3>
+    <p>Data är manuellt rensad från PDF:en (PDF:ens flerkolumnslayout gör automatisk textutläsning opålitlig). Täcker följande ämnen och övningar:</p>
+
+    <div class="subject-chips">
+      <div class="subject-chip">
+        <span class="s-name">Verb</span>
+        <span class="s-count">Övn. 5, 10–14, 19, 21–23, 25, 29, 34 · ~200 svar</span>
+      </div>
+      <div class="subject-chip">
+        <span class="s-name">Pronomen</span>
+        <span class="s-count">Övn. 6, 10, 11, 21, 23, 24, 27, 28 · ~130 svar</span>
+      </div>
+      <div class="subject-chip">
+        <span class="s-name">Adjektiv</span>
+        <span class="s-count">Övn. 2–4, 7a, 7b, 8, 10–12 · ~220 svar</span>
+      </div>
+      <div class="subject-chip">
+        <span class="s-name">Adverb</span>
+        <span class="s-count">Övn. 3, 8–11, 15, 17 · ~100 svar</span>
+      </div>
+      <div class="subject-chip">
+        <span class="s-name">Konjunktioner</span>
+        <span class="s-count">Övn. 2 · 19 svar</span>
+      </div>
+      <div class="subject-chip">
+        <span class="s-name">Prepositioner</span>
+        <span class="s-count">Övn. 1a–1e · ~70 svar</span>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <span>Övningar markerade "Egen produktion" i boken saknar fasta svar och finns inte med. Flervalsfrågor (övn. 7, 8 i presenssystemet m.fl.) finns inte heller med eftersom svaren är bokstäver (a/b/c/d) snarare än grammatiska former.</span>
+    </div>
+  </section>
+
+  <!-- 7. Webbapparna -->
+  <section id="webbappar">
+    <h2><span class="icon">🌐</span> Webbapparna</h2>
+    <p>Det finns en publicerad webbapp med två lägen, åtskilda via URL-parametrar:</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">📊 Elevens resultatsida</div>
+        <p>
+          <strong>URL:</strong> <code>WEBAPP_URL?token=xxx</code><br>
+          <strong>Åtkomst:</strong> Alla (ingen inloggning)<br>
+          <strong>Skickas:</strong> Automatiskt via mejl vid första inlämning<br><br>
+          Visar elevens alla testresultat, procent per test och medel per ämnesområde. Länken är permanent och fungerar för alla framtida inlämningar.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">🎓 Klassöversikt (lärare)</div>
+        <p>
+          <strong>URL:</strong> <code>LÄRAR_URL?view=klass</code><br>
+          <strong>Åtkomst:</strong> Kräver Google-inloggning<br>
+          <strong>Öppnas:</strong> Manuellt av läraren i webbläsaren<br><br>
+          Visar alla elevers resultat i en sorterbar tabell med medel per ämnesområde och färgkodning baserad på resultatnivå.
+        </p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <span>Vid kodändringar i Apps Script: publicera alltid som <strong>ny version</strong> av befintlig distribution – inte som ny distribution. En ny distribution ger en ny URL, vilket gör elevernas sparade länkar ogiltiga.</span>
+    </div>
+  </section>
+
+  <!-- 8. Stack -->
+  <section id="stack">
+    <h2><span class="icon">🛠️</span> Teknisk stack</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Teknik</th>
+            <th>Roll</th>
+            <th>Kostnad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Google Sheets</td>
+            <td>Databas, konfiguration, facitflikar, loggning</td>
+            <td><span class="badge badge-green">Gratis</span></td>
+          </tr>
+          <tr>
+            <td>Google Forms</td>
+            <td>Insamling av elevsvar</td>
+            <td><span class="badge badge-green">Gratis</span></td>
+          </tr>
+          <tr>
+            <td>Google Apps Script</td>
+            <td>Automation, rättning, webbapp, mejlutskick</td>
+            <td><span class="badge badge-green">Gratis</span></td>
+          </tr>
+          <tr>
+            <td>Google Drive</td>
+            <td>Lagring av formulär och kalkylark</td>
+            <td><span class="badge badge-green">Gratis</span></td>
+          </tr>
+          <tr>
+            <td>Gmail</td>
+            <td>Välkomstmejl med personlig länk till elever</td>
+            <td><span class="badge badge-green">Gratis</span></td>
+          </tr>
+          <tr>
+            <td>GitHub</td>
+            <td>Versionshantering av kod, backup av filer</td>
+            <td><span class="badge badge-green">Gratis</span></td>
+          </tr>
+          <tr>
+            <td>HTML / CSS / JavaScript</td>
+            <td>Gränssnitt för elevvy och klassöversikt</td>
+            <td><span class="badge badge-green">Gratis</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <span>Hela systemet körs på Googles infrastruktur och kostar ingenting utöver ett vanligt Google Workspace-konto (som de flesta skolor redan har).</span>
+    </div>
+  </section>
+
+  <div class="footer">
+    Grammatiktester · Systemöversikt · github.com/erengisle/grammatiktester
+  </div>
+
+</div>
+</body>
+</html>
