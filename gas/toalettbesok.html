@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toalettbesök</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #1a73e8;
+      --blue-dark:  #1557b0;
+      --red:        #ea4335;
+      --red-light:  #fff3f0;
+      --green:      #34a853;
+      --green-light:#f0faf4;
+      --grey:       #f1f3f4;
+      --grey-border:#dadce0;
+      --text:       #202124;
+      --text-muted: #5f6368;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f8f9fa;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── SETUP ─────────────────────────────────── */
+    #setup-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .setup-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 44px 40px 40px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.10);
+    }
+
+    .setup-logo {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .setup-logo .icon {
+      font-size: 52px;
+      line-height: 1;
+    }
+
+    .setup-logo h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--blue);
+      margin-top: 10px;
+      letter-spacing: -.3px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    select, input[type="text"], input[type="date"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--grey-border);
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color .2s;
+      background: #fff;
+      color: var(--text);
+    }
+
+    select:focus, input:focus { border-color: var(--blue); }
+
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: background .2s, transform .1s;
+    }
+
+    .btn-primary:hover  { background: var(--blue-dark); }
+    .btn-primary:active { transform: scale(.98); }
+
+    /* ── MAIN SCREEN ───────────────────────────── */
+    #main-screen { display: none; }
+
+    .header {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+      color: #fff;
+      padding: 18px 24px 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.18);
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.2px;
+    }
+
+    #clock {
+      font-size: 16px;
+      font-weight: 600;
+      opacity: .85;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      background: rgba(255,255,255,.20);
+      backdrop-filter: blur(4px);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* ── STATUS BAR ────────────────────────────── */
+    .status-bar {
+      background: #fff;
+      padding: 10px 24px;
+      border-bottom: 1px solid var(--grey-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .out-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .out-badge {
+      background: var(--red);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .out-badge.zero { background: var(--grey-border); color: var(--text-muted); }
+
+    .btn-ghost {
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid var(--grey-border);
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: background .15s;
+    }
+    .btn-ghost:hover { background: var(--grey); color: var(--text); }
+
+    /* ── LEGEND ────────────────────────────────── */
+    .legend {
+      display: flex;
+      gap: 18px;
+      padding: 10px 24px 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── STUDENT GRID ──────────────────────────── */
+    .students-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 12px;
+      padding: 16px 24px 32px;
+    }
+
+    .student-btn {
+      position: relative;
+      padding: 15px 14px 13px;
+      border-radius: 14px;
+      border: 2px solid var(--grey-border);
+      background: #fff;
+      cursor: pointer;
+      text-align: left;
+      transition: transform .15s, box-shadow .15s, border-color .2s, background .2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    }
+
+    .student-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,.11);
+    }
+
+    .student-btn:active { transform: scale(.97); }
+
+    .student-btn.out {
+      background: var(--red-light);
+      border-color: var(--red);
+    }
+
+    .student-btn.returned {
+      background: var(--green-light);
+      border-color: var(--green);
+    }
+
+    .s-dot {
+      position: absolute;
+      top: 11px;
+      right: 12px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--grey-border);
+    }
+
+    .student-btn.out      .s-dot { background: var(--red);   }
+    .student-btn.returned .s-dot { background: var(--green); }
+
+    .s-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      padding-right: 18px;
+      margin-bottom: 4px;
+    }
+
+    .student-btn.out      .s-name { color: var(--red);   }
+    .student-btn.returned .s-name { color: var(--green); }
+
+    .s-status {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .student-btn.out      .s-status { color: #b71c1c; }
+    .student-btn.returned .s-status { color: #1b5e20; }
+
+    /* ── MODAL ─────────────────────────────────── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .overlay.show { display: flex; }
+
+    .modal {
+      background: #fff;
+      border-radius: 18px;
+      padding: 32px 28px 24px;
+      max-width: 340px;
+      width: 92%;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,.18);
+    }
+
+    .modal-icon { font-size: 36px; margin-bottom: 10px; }
+    .modal h2   { font-size: 19px; font-weight: 700; margin-bottom: 6px; }
+    .modal p    { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+
+    .modal-actions { display: flex; gap: 10px; }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      transition: opacity .15s;
+    }
+
+    .modal-actions button:hover { opacity: .88; }
+
+    .btn-confirm { background: var(--blue);  color: #fff; }
+    .btn-cancel  { background: var(--grey); color: var(--text); }
+
+    /* ── TOAST ─────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #323232;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transition: transform .3s, opacity .3s;
+      z-index: 300;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── SETUP ─────────────────────────────────── -->
+<div id="setup-screen">
+  <div class="setup-card">
+    <div class="setup-logo">
+      <div class="icon">🚻</div>
+      <h1>Toalettbesök</h1>
+    </div>
+
+    <div class="form-group">
+      <label>Klass</label>
+      <select id="class-select">
+        <option value="">Laddar klasser…</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Provets namn</label>
+      <input type="text" id="test-name" placeholder="t.ex. Nationella provet svenska" />
+    </div>
+
+    <div class="form-group">
+      <label>Datum</label>
+      <input type="date" id="session-date" />
+    </div>
+
+    <button class="btn-primary" onclick="startSession()">Starta session →</button>
+  </div>
+</div>
+
+<!-- ── MAIN SCREEN ───────────────────────────── -->
+<div id="main-screen">
+  <div class="header">
+    <div class="header-row">
+      <div class="header-title">🚻 Toalettbesök</div>
+      <div id="clock"></div>
+    </div>
+    <div class="chips">
+      <span class="chip" id="h-class"></span>
+      <span class="chip" id="h-test"></span>
+      <span class="chip" id="h-date"></span>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="out-indicator">
+      <div class="out-badge zero" id="out-badge">0</div>
+      <span>elever ute just nu</span>
+    </div>
+    <button class="btn-ghost" onclick="confirmClear()">Rensa session</button>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="dot" style="background:var(--grey-border)"></div> Ej lämnat</div>
+    <div class="legend-item"><div class="dot" style="background:var(--red)"></div> Ute nu</div>
+    <div class="legend-item"><div class="dot" style="background:var(--green)"></div> Tillbaka</div>
+  </div>
+
+  <div class="students-grid" id="students-grid"></div>
+</div>
+
+<!-- ── MODAL ─────────────────────────────────── -->
+<div class="overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-icon" id="m-icon"></div>
+    <h2 id="m-title"></h2>
+    <p  id="m-body"></p>
+    <div class="modal-actions">
+      <button class="btn-cancel"  onclick="closeModal()">Avbryt</button>
+      <button class="btn-confirm" id="m-confirm">Bekräfta</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ─────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<script>
+  let currentClass = '';
+  let students     = [];
+
+  // ── SETUP ──────────────────────────────────
+  window.onload = () => {
+    const today = new Date();
+    document.getElementById('session-date').value = today.toISOString().split('T')[0];
+
+    google.script.run
+      .withSuccessHandler(classes => {
+        const sel = document.getElementById('class-select');
+        if (!classes.length) {
+          sel.innerHTML = '<option value="">Inga flikar hittades</option>';
+          return;
+        }
+        sel.innerHTML = classes
+          .map(c => `<option value="${escHtml(c)}">${escHtml(c)}</option>`)
+          .join('');
+      })
+      .getClasses();
+  };
+
+  function startSession() {
+    currentClass        = document.getElementById('class-select').value;
+    const testName      = document.getElementById('test-name').value.trim();
+    const dateVal       = document.getElementById('session-date').value;
+
+    if (!currentClass || !testName || !dateVal) {
+      showToast('Fyll i klass, provets namn och datum.');
+      return;
+    }
+
+    const [y, m, d] = dateVal.split('-');
+    const months    = ['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
+    const dateStr   = `${parseInt(d)} ${months[parseInt(m) - 1]} ${y}`;
+
+    document.getElementById('h-class').textContent = currentClass;
+    document.getElementById('h-test').textContent  = testName;
+    document.getElementById('h-date').textContent  = dateStr;
+
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('main-screen').style.display  = 'block';
+
+    loadStudents();
+    startClock();
+    setInterval(loadStudents, 30000);
+  }
+
+  // ── CLOCK ──────────────────────────────────
+  function startClock() {
+    const tick = () => {
+      document.getElementById('clock').textContent =
+        new Date().toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  // ── STUDENTS ───────────────────────────────
+  function loadStudents() {
+    google.script.run
+      .withSuccessHandler(renderStudents)
+      .withFailureHandler(err => showToast('Fel: ' + err.message))
+      .getStudents(currentClass);
+  }
+
+  function renderStudents(data) {
+    students = data;
+    let outCount = 0;
+    const grid = document.getElementById('students-grid');
+
+    grid.innerHTML = students.map((s, i) => {
+      let cls = '', statusHtml = 'Klicka för att gå';
+
+      if (s.returned) {
+        cls = 'returned';
+        statusHtml = `Gick ${escHtml(s.left)}<br>Tillbaka ${escHtml(s.returned)}`;
+      } else if (s.left) {
+        cls = 'out';
+        statusHtml = `Gick klockan ${escHtml(s.left)}`;
+        outCount++;
+      }
+
+      return `
+        <button class="student-btn ${cls}" onclick="handleClick(${i})">
+          <div class="s-dot"></div>
+          <div class="s-name">${escHtml(s.name)}</div>
+          <div class="s-status">${statusHtml}</div>
+        </button>`;
+    }).join('');
+
+    const badge = document.getElementById('out-badge');
+    badge.textContent = outCount;
+    badge.classList.toggle('zero', outCount === 0);
+  }
+
+  // ── CLICK HANDLER ──────────────────────────
+  function handleClick(idx) {
+    const s = students[idx];
+
+    if (!s.left) {
+      showModal('🚶', `${s.name} lämnar`,
+        `Registrera att ${s.name} går på toaletten nu?`,
+        () => {
+          closeModal();
+          google.script.run
+            .withSuccessHandler(r => { if (r.success) { showToast(`${s.name} registrerad – ${r.time}`); loadStudents(); } })
+            .logLeave(currentClass, s.name);
+        });
+
+    } else if (!s.returned) {
+      showModal('🏃', `${s.name} är tillbaka`,
+        `Registrera att ${s.name} är tillbaka?\n(Gick klockan ${s.left})`,
+        () => {
+          closeModal();
+          google.script.run
+            .withSuccessHandler(r => { if (r.success) { showToast(`${s.name} tillbaka – ${r.time}`); loadStudents(); } })
+            .logReturn(currentClass, s.name);
+        });
+
+    } else {
+      showModal('↩️', `Återställ ${s.name}`,
+        `Ta bort registreringen för ${s.name}?`,
+        () => {
+          closeModal();
+          google.script.run
+            .withSuccessHandler(r => { if (r.success) { showToast(`${s.name} återställd`); loadStudents(); } })
+            .resetStudent(currentClass, s.name);
+        });
+    }
+  }
+
+  function confirmClear() {
+    showModal('🗑️', 'Rensa session',
+      'Vill du rensa alla tider för den här sessionen?',
+      () => {
+        closeModal();
+        google.script.run
+          .withSuccessHandler(() => { showToast('Sessionen rensad'); loadStudents(); })
+          .clearSession(currentClass);
+      });
+  }
+
+  // ── MODAL HELPERS ──────────────────────────
+  function showModal(icon, title, body, onConfirm) {
+    document.getElementById('m-icon').textContent    = icon;
+    document.getElementById('m-title').textContent   = title;
+    document.getElementById('m-body').textContent    = body;
+    document.getElementById('m-confirm').onclick     = onConfirm;
+    document.getElementById('modal-overlay').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('show');
+  }
+
+  document.getElementById('modal-overlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+
+  // ── TOAST ──────────────────────────────────
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── UTILS ──────────────────────────────────
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>
