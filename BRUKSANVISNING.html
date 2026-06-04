@@ -623,7 +623,7 @@
         <div class="card-title">🎓 Klassöversikt (lärare)</div>
         <p><strong>Åtkomst:</strong> Bara du (Google-inloggning krävs)<br>
         <strong>URL-format:</strong> <code>LÄRAR_URL?view=klass</code><br>
-        Öppnas direkt i webbläsaren. Visar alla elevers medel per område.</p>
+        Öppnas direkt i webbläsaren. Visar alla elevers medel per område. Klicka på ett elevnamn för att se elevens individuella testresultat per område i ett detaljfönster.</p>
       </div>
     </div>
 
@@ -712,27 +712,27 @@
       </table>
     </div>
 
-    <h3>Hjälpfunktioner</h3>
-    <p>Dessa funktioner kan läggas in tillfälligt i <code>resultathantering.gs</code> vid behov:</p>
+    <h3>Inbyggda hjälpfunktioner</h3>
+    <p>Följande funktioner finns redan i <code>resultathantering.gs</code> och kan köras direkt från Apps Script:</p>
 
-    <p><strong>Skicka om länkarna till alla elever med token:</strong></p>
-    <div class="code-block">
-<span class="comment">// Kör en gång för att skicka rätt länk till alla elever som har token</span>
-<span class="key">function</span> skickaOmLankar() {
-  <span class="key">var</span> ss = SpreadsheetApp.getActiveSpreadsheet();
-  <span class="key">var</span> elever = ss.getSheetByName(<span class="val">"Elever"</span>).getDataRange().getValues();
-  <span class="key">for</span> (<span class="key">var</span> i = 1; i &lt; elever.length; i++) {
-    <span class="key">var</span> email = elever[i][0] ? elever[i][0].toString().trim() : <span class="val">""</span>;
-    <span class="key">var</span> namn  = elever[i][1] ? elever[i][1].toString() : <span class="val">""</span>;
-    <span class="key">var</span> token = elever[i][2] ? elever[i][2].toString() : <span class="val">""</span>;
-    <span class="key">if</span> (!email || !token) <span class="key">continue</span>;
-    <span class="key">var</span> lank = WEBAPP_URL + <span class="val">"?token="</span> + token;
-    GmailApp.sendEmail(email, <span class="val">"Din länk till grammatikresultat"</span>, <span class="val">""</span>, {
-      htmlBody: <span class="val">"&lt;p&gt;Hej "</span> + namn + <span class="val">"!&lt;/p&gt;&lt;p&gt;&lt;a href='"</span> + lank + <span class="val">"'&gt;Öppna min resultatsida&lt;/a&gt;&lt;/p&gt;"</span>
-    });
-  }
-}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Funktion</th><th>Vad den gör</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>skickaOmLankar()</code></td>
+            <td>Skickar ett nytt mejl med korrekt länk till alla elever som har en token. Kör om elever fått en trasig länk.</td>
+          </tr>
+          <tr>
+            <td><code>uppdateraKlassoversiktManuellt()</code></td>
+            <td>Uppdaterar KLASSÖVERSIKT-fliken utan att vänta på ett nytt formulärinlämning. Praktisk efter manuella ändringar i RESULTAT_LOGG.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+
+    <h3>Hjälpfunktioner att lägga till vid behov</h3>
+    <p>Dessa finns <em>inte</em> i koden – klistra in dem tillfälligt i <code>resultathantering.gs</code> om du behöver dem:</p>
 
     <p><strong>Rätta om alla svar i en svarssheet:</strong></p>
     <div class="code-block">
