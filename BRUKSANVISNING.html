@@ -317,21 +317,63 @@
 
 <div class="container">
 
+  <!-- Snabbstart -->
+  <section id="snabbstart">
+    <h2><span class="icon">⚡</span> Snabbstart (har du varit borta ett tag?)</h2>
+    <p>Kom igång igen på två minuter – kolla det här innan du gör något annat:</p>
+
+    <div class="callout info">
+      <span class="callout-icon">✅</span>
+      <span>
+        <strong>Snabbkontroll:</strong>
+        <ol style="margin-top:8px;">
+          <li>Öppna Master-kalkylarket → <strong>Tillägg → Apps Script</strong>. Koden ska finnas i fem filer (se <a href="#script">avsnitt 5</a>).</li>
+          <li>Kontrollera att <code>WEBAPP_URL</code> längst upp i <code>resultathantering.gs</code> <em>inte</em> säger <code>"DIN_WEBAPP_URL_HÄR"</code>.</li>
+          <li>Klicka på klocksymbolen (<strong>Utlösare</strong>) och kontrollera att en trigger för <code>onFormSubmit</code> fortfarande finns och inte visar felmeddelanden.</li>
+          <li>Testa klassöversikten i webbläsaren: <code>LÄRAR_URL?view=klass</code>.</li>
+        </ol>
+      </span>
+    </div>
+
+    <h3>Skapa ett nytt test – kortversion</h3>
+    <ol class="steps">
+      <li>Fyll i frågor i fliken <strong>Frågor</strong> (frågetext i kolumn A, från rad 2).</li>
+      <li>Meny <strong>📝 Formulär → Skapa nytt formulär</strong>.</li>
+      <li>Koppla formulärets <strong>Svar</strong>-flik till Master-kalkylarket (görs manuellt varje gång).</li>
+      <li>Skapa en facitflik (t.ex. <code>FACIT_V02</code>), ingen rubrikrad, svar i kolumn B.</li>
+      <li>Lägg till en rad i <strong>Testregister</strong> med TestID, Område, Facitflik och Svarssheet.</li>
+    </ol>
+    <p>Fullständiga instruktioner finns i <a href="#nytt-test">avsnitt 7</a>.</p>
+
+    <h3>Vanligaste snabbfixarna</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Symptom</th><th>Kör detta</th></tr></thead>
+        <tbody>
+          <tr><td>Elever har trasiga länkar</td><td><code>skickaOmLankar()</code></td></tr>
+          <tr><td>Klassöversikten verkar inaktuell</td><td><code>uppdateraKlassoversiktManuellt()</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Se fullständig felsökningstabell i <a href="#felsok">avsnitt 12</a>.</p>
+  </section>
+
   <!-- Innehållsförteckning -->
   <div class="nav">
     <h3>Innehåll</h3>
     <ol>
-      <li data-n="1"><a href="#oversikt">Vad systemet gör</a></li>
-      <li data-n="2"><a href="#flode">Flödet steg för steg</a></li>
-      <li data-n="3"><a href="#kalkylark">Kalkylarkstruktur</a></li>
-      <li data-n="4"><a href="#script">Apps Script-filerna</a></li>
-      <li data-n="5"><a href="#setup">Första gången: Sätta upp systemet</a></li>
-      <li data-n="6"><a href="#nytt-test">Skapa ett nytt test</a></li>
-      <li data-n="7"><a href="#elever">Lägga till elever</a></li>
-      <li data-n="8"><a href="#webbapp">Webbapparna</a></li>
-      <li data-n="9"><a href="#automatiskt">Vad som sköts automatiskt</a></li>
-      <li data-n="10"><a href="#regler">Viktiga regler att komma ihåg</a></li>
-      <li data-n="11"><a href="#felsok">Felsökning</a></li>
+      <li data-n="1"><a href="#snabbstart">Snabbstart</a></li>
+      <li data-n="2"><a href="#oversikt">Vad systemet gör</a></li>
+      <li data-n="3"><a href="#flode">Flödet steg för steg</a></li>
+      <li data-n="4"><a href="#kalkylark">Kalkylarkstruktur</a></li>
+      <li data-n="5"><a href="#script">Apps Script-filerna</a></li>
+      <li data-n="6"><a href="#setup">Första gången: Sätta upp systemet</a></li>
+      <li data-n="7"><a href="#nytt-test">Skapa ett nytt test</a></li>
+      <li data-n="8"><a href="#elever">Lägga till elever</a></li>
+      <li data-n="9"><a href="#webbapp">Webbapparna</a></li>
+      <li data-n="10"><a href="#automatiskt">Vad som sköts automatiskt</a></li>
+      <li data-n="11"><a href="#regler">Viktiga regler att komma ihåg</a></li>
+      <li data-n="12"><a href="#felsok">Felsökning</a></li>
     </ol>
   </div>
 
@@ -415,7 +457,7 @@
           <tr>
             <td>KLASSÖVERSIKT</td>
             <td>Byggs om automatiskt</td>
-            <td>Namn + medel per område per elev. Byggs om helt vid varje inlämning – redigera aldrig manuellt.</td>
+            <td>Namn + upp till 10 individuella testresultat och ett medelvärde per område per elev, färgkodat. Byggs om helt från RESULTAT_LOGG vid varje inlämning – redigera aldrig manuellt.</td>
           </tr>
           <tr>
             <td>FACIT_V01, FACIT_V02 …</td>
@@ -424,8 +466,8 @@
           </tr>
           <tr>
             <td>Frågor</td>
-            <td><code>A: Frågetext</code> (kolumn B+ = svarsalternativ vid flerval)</td>
-            <td>Fyll i frågorna här innan du skapar ett formulär. Används av formulärskaparen.</td>
+            <td><code>A: Frågetext</code> (endast rad 2 och nedåt) — <code>B+ rad 1</code>: svarsalternativ vid flerval</td>
+            <td>Fyll i frågorna här innan du skapar ett formulär. Används av formulärskaparen. <strong>Rad 1 är alltid reserverad</strong> och läses aldrig som fråga.</td>
           </tr>
         </tbody>
       </table>
@@ -434,6 +476,11 @@
     <div class="callout warn">
       <span class="callout-icon">⚠️</span>
       <span><strong>Facitfliken har ingen rubrikrad.</strong> Rad 1 är alltså redan det första svaret. Se till att antalet rader i facitfliken stämmer exakt med antalet frågor i formuläret.</span>
+    </div>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <span><strong>Frågor-fliken har alltid en reserverad rad 1.</strong> Formulärskaparen läser frågetext från rad 2 och nedåt i kolumn A – vad som än står i rad 1 kolumn A ignoreras. Om rad 1 kolumn B+ innehåller minst två värden blir <em>alla</em> frågor i formuläret flervalsfrågor med just de svarsalternativen (samma alternativ för hela formuläret, inte per fråga).</span>
     </div>
   </section>
 
@@ -552,7 +599,7 @@
 
     <ol class="steps">
       <li>Öppna fliken <strong>Frågor</strong> i kalkylarket. Rensa eventuellt gammalt innehåll.</li>
-      <li>Skriv in frågorna i kolumn A (en fråga per rad). Rad 1 kan vara en rubrik om du vill använda svarsalternativ – annars skriv bara frågor från rad 1.</li>
+      <li>Rad 1 är alltid reserverad och räknas aldrig som fråga. Lämna rad 1 kolumn A tom (eller skriv en rubrik – den läses inte). Ska frågorna vara flervalsfrågor: skriv svarsalternativen i rad 1, kolumn B, C, D … (minst två). Skriv därefter frågorna i kolumn A <strong>från och med rad 2</strong>, en fråga per rad.</li>
       <li>Klicka på menyn <strong>📝 Formulär → Skapa nytt formulär</strong>. (Om menyn saknas: ladda om sidan.)</li>
       <li>Formuläret skapas och du får en dialogruta med en länk för att redigera och en länk för att dela med elever.</li>
       <li>Öppna formuläret och koppla det till Master-kalkylarket:
