@@ -355,7 +355,7 @@
         </tbody>
       </table>
     </div>
-    <p>Se fullständig felsökningstabell i <a href="#felsok">avsnitt 12</a>.</p>
+    <p>Se fullständig felsökningstabell i <a href="#felsok">avsnitt 13</a>.</p>
   </section>
 
   <!-- Innehållsförteckning -->
@@ -373,7 +373,8 @@
       <li data-n="9"><a href="#webbapp">Webbapparna</a></li>
       <li data-n="10"><a href="#automatiskt">Vad som sköts automatiskt</a></li>
       <li data-n="11"><a href="#regler">Viktiga regler att komma ihåg</a></li>
-      <li data-n="12"><a href="#felsok">Felsökning</a></li>
+      <li data-n="12"><a href="#underhall">Flytta Mastern & ta bort elever</a></li>
+      <li data-n="13"><a href="#felsok">Felsökning</a></li>
     </ol>
   </div>
 
@@ -717,7 +718,32 @@
     <p>Dessa flikar byggs om av scriptet. Manuella ändringar skrivs över eller kan orsaka fel.</p>
   </section>
 
-  <!-- 11. Felsökning -->
+  <!-- 11. Underhåll -->
+  <section id="underhall">
+    <h2><span class="icon">🧹</span> Flytta Mastern & ta bort elever</h2>
+
+    <h3>Flytta Master-kalkylarket</h3>
+    <p>Du kan lugnt flytta Master-kalkylarket till en annan mapp i Google Drive – <strong>ingen kod behöver ändras</strong>. Apps Script-koden är knuten till kalkylarkets fil-ID, inte till var filen ligger, så både scriptet och webbappens publicerade URL fortsätter fungera precis som förut.</p>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <span>Det här gäller att <em>flytta</em> Mastern. Gör du istället en <strong>kopia</strong> av den får kopian ett nytt fil-ID – då måste du koppla om scriptet till kopian och göra en ny webbapp-distribution, eftersom den gamla fortfarande pekar på originalfilen.</span>
+    </div>
+
+    <p>Blanda inte ihop det här med <code>FOLDER_ID</code> i <code>formularskapare.gs</code> (se avsnitt 5, steg 3) – den styr bara <strong>var nya Google Formulär sparas</strong> när du skapar dem via menyn, inte var Mastern själv ligger. Flyttar du den mappen behöver du uppdatera <code>FOLDER_ID</code>; flyttar du Mastern behöver du inte ändra något alls.</p>
+
+    <h3>Ta bort elever och deras svar</h3>
+    <p>Det finns ingen inbyggd "ta bort"-funktion i koden – det görs manuellt direkt i kalkylarket:</p>
+
+    <ol class="steps">
+      <li>Ta bort elevens rad i <strong>Elever</strong>-fliken. Det gör också att elevens gamla resultatlänk slutar fungera (webbappen hittar då ingen elev med den token:en).</li>
+      <li>Ta bort elevens rader i <strong>RESULTAT_LOGG</strong> – sortera eller filtrera på kolumn B (Email) för att hitta dem.</li>
+      <li>Kör <code>uppdateraKlassoversiktManuellt()</code> i Apps Script så att <strong>KLASSÖVERSIKT</strong> byggs om direkt. Annars ligger de gamla resultaten kvar där tills nästa elev lämnar in något.</li>
+      <li>Vill du städa helt: ta även bort elevens rad(er) i respektive formulärs egen svarsflik (t.ex. "Verb 1 (svar)"). De påverkar inget i systemet om de ligger kvar, men kan vara bra att rensa av integritetsskäl.</li>
+    </ol>
+  </section>
+
+  <!-- 12. Felsökning -->
   <section id="felsok">
     <h2><span class="icon">🔧</span> Felsökning</h2>
 
