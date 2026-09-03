@@ -17,7 +17,8 @@ Ett automatiserat system för att skapa grammatiktest, rätta elevernas svar och
 9. [Webbapparna](#webbapparna)
 10. [Vad som sköts automatiskt](#vad-som-sköts-automatiskt)
 11. [Viktiga regler att komma ihåg](#viktiga-regler-att-komma-ihåg)
-12. [Felsökning](#felsökning)
+12. [Flytta Mastern & ta bort elever](#flytta-mastern--ta-bort-elever)
+13. [Felsökning](#felsökning)
 
 ---
 
@@ -47,7 +48,7 @@ Fullständiga instruktioner finns i [avsnitt 7](#skapa-ett-nytt-test).
 | Elever har trasiga länkar | `skickaOmLankar()` |
 | Klassöversikten verkar inaktuell | `uppdateraKlassoversiktManuellt()` |
 
-Se fullständig felsökningstabell i [avsnitt 12](#felsökning).
+Se fullständig felsökningstabell i [avsnitt 13](#felsökning).
 
 ---
 
@@ -232,6 +233,25 @@ Google Apps Script kan inte automatiskt koppla ett nytt formulär till Master-ka
 
 ### Rör aldrig RESULTAT_LOGG eller KLASSÖVERSIKT manuellt
 Dessa flikar byggs om av scriptet. Manuella ändringar skrivs över eller kan orsaka fel.
+
+## Flytta Mastern & ta bort elever
+
+### Flytta Master-kalkylarket
+
+Du kan lugnt flytta Master-kalkylarket till en annan mapp i Google Drive – **ingen kod behöver ändras**. Apps Script-koden är knuten till kalkylarkets fil-ID, inte till var filen ligger, så både scriptet och webbappens publicerade URL fortsätter fungera precis som förut.
+
+> ⚠️ Det här gäller att *flytta* Mastern. Gör du istället en **kopia** av den får kopian ett nytt fil-ID – då måste du koppla om scriptet till kopian och göra en ny webbapp-distribution, eftersom den gamla fortfarande pekar på originalfilen.
+
+Blanda inte ihop det här med `FOLDER_ID` i `formularskapare.gs` (se [avsnitt 6](#första-gången-sätta-upp-systemet), steg 3) – den styr bara **var nya Google Formulär sparas** när du skapar dem via menyn, inte var Mastern själv ligger. Flyttar du den mappen behöver du uppdatera `FOLDER_ID`; flyttar du Mastern behöver du inte ändra något alls.
+
+### Ta bort elever och deras svar
+
+Det finns ingen inbyggd "ta bort"-funktion i koden – det görs manuellt direkt i kalkylarket:
+
+1. Ta bort elevens rad i **Elever**-fliken. Det gör också att elevens gamla resultatlänk slutar fungera (webbappen hittar då ingen elev med den token:en).
+2. Ta bort elevens rader i **RESULTAT_LOGG** – sortera eller filtrera på kolumn B (Email) för att hitta dem.
+3. Kör `uppdateraKlassoversiktManuellt()` i Apps Script så att **KLASSÖVERSIKT** byggs om direkt. Annars ligger de gamla resultaten kvar där tills nästa elev lämnar in något.
+4. Vill du städa helt: ta även bort elevens rad(er) i respektive formulärs egen svarsflik (t.ex. "Verb 1 (svar)"). De påverkar inget i systemet om de ligger kvar, men kan vara bra att rensa av integritetsskäl.
 
 ## Felsökning
 
