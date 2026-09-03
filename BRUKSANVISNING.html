@@ -373,7 +373,7 @@
       <li data-n="9"><a href="#webbapp">Webbapparna</a></li>
       <li data-n="10"><a href="#automatiskt">Vad som sköts automatiskt</a></li>
       <li data-n="11"><a href="#regler">Viktiga regler att komma ihåg</a></li>
-      <li data-n="12"><a href="#underhall">Flytta Mastern & ta bort elever</a></li>
+      <li data-n="12"><a href="#underhall">Flytta Mastern, rensa resultat & börja om</a></li>
       <li data-n="13"><a href="#felsok">Felsökning</a></li>
     </ol>
   </div>
@@ -720,7 +720,7 @@
 
   <!-- 11. Underhåll -->
   <section id="underhall">
-    <h2><span class="icon">🧹</span> Flytta Mastern & ta bort elever</h2>
+    <h2><span class="icon">🧹</span> Flytta Mastern, rensa resultat & börja om</h2>
 
     <h3>Flytta Master-kalkylarket</h3>
     <p>Du kan lugnt flytta Master-kalkylarket till en annan mapp i Google Drive – <strong>ingen kod behöver ändras</strong>. Apps Script-koden är knuten till kalkylarkets fil-ID, inte till var filen ligger, så både scriptet och webbappens publicerade URL fortsätter fungera precis som förut.</p>
@@ -741,6 +741,29 @@
       <li>Kör <code>uppdateraKlassoversiktManuellt()</code> i Apps Script så att <strong>KLASSÖVERSIKT</strong> byggs om direkt. Annars ligger de gamla resultaten kvar där tills nästa elev lämnar in något.</li>
       <li>Vill du städa helt: ta även bort elevens rad(er) i respektive formulärs egen svarsflik (t.ex. "Verb 1 (svar)"). De påverkar inget i systemet om de ligger kvar, men kan vara bra att rensa av integritetsskäl.</li>
     </ol>
+
+    <h3>Ta bort alla svar (nollställa resultaten)</h3>
+    <p>Vill du rensa alla resultat men behålla eleverna och deras länkar (t.ex. inför en ny termin)?</p>
+    <ol class="steps">
+      <li>Öppna <strong>RESULTAT_LOGG</strong>-fliken.</li>
+      <li>Markera alla rader <strong>utom rad 1</strong> (rubrikraden) och ta bort dem.</li>
+      <li>Kör <code>uppdateraKlassoversiktManuellt()</code> så <strong>KLASSÖVERSIKT</strong> byggs om till tom direkt.</li>
+    </ol>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <span>Töm aldrig bara email-kolumnen (B) och låt raderna ligga kvar – då <em>försvinner</em> de resultaten spårlöst ur klassöversikten och elevernas resultatsidor, eftersom både <code>uppdateraKlassoversikt()</code> och <code>hamtaElevResultat()</code> matchar rader mot email. Ta bort hela raderna istället.</span>
+    </div>
+    <p>Detta rör inte de enskilda formulärens egna svarsflikar (t.ex. "Verb 1 (svar)") – de är Googles råsvar och läses bara en gång vid inlämningstillfället, aldrig igen efteråt.</p>
+
+    <h3>Börja helt om (t.ex. ny skola eller nya elever)</h3>
+    <p>Vill du nollställa allt – både resultat och elevernas gamla länkar – t.ex. för att gamla eleverna kommer från en annan skola:</p>
+    <ol class="steps">
+      <li>Ta bort <strong>alla rader</strong> i <strong>Elever</strong>-fliken (utom rubrikraden). De gamla elevernas länkar (tokens) slutar då fungera direkt – webbappen hittar dem inte längre.</li>
+      <li>Ta bort alla rader i <strong>RESULTAT_LOGG</strong> (utom rubrikraden), som ovan.</li>
+      <li>Kör <code>uppdateraKlassoversiktManuellt()</code> så <strong>KLASSÖVERSIKT</strong> blir tom direkt.</li>
+      <li>Lägg till dina nya elever i Elever-fliken (Email + Namn, lämna Token tom). De får nya tokens och nya länkar automatiskt vid sin första inlämning, precis som vanligt.</li>
+    </ol>
+    <p>Testregister, facitflikarna och själva formulären påverkas inte – du kan återanvända samma test för de nya eleverna, eller skapa nya, helt oberoende av omstarten.</p>
   </section>
 
   <!-- 12. Felsökning -->
