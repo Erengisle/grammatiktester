@@ -10,6 +10,7 @@ function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu("📝 Formulär")
     .addItem("Skapa nytt formulär", "skapaFormular")
+    .addItem("Visa formulärlänkar", "visaFormularlankar")
     .addToUi();
 }
 
@@ -68,4 +69,36 @@ function skapaFormular() {
     .setHeight(150);
 
   SpreadsheetApp.getUi().showModalDialog(html, "Formulär skapat");
+}
+
+// Listar alla formulär i FOLDER_ID med klickbara länkar, så man slipper leta i Drive.
+function visaFormularlankar() {
+  var mapp = DriveApp.getFolderById(FOLDER_ID);
+  var filer = mapp.getFilesByType(MimeType.GOOGLE_FORMS);
+
+  var formular = [];
+  while (filer.hasNext()) {
+    var fil = filer.next();
+    formular.push({
+      namn: fil.getName(),
+      lank: FormApp.openById(fil.getId()).getPublishedUrl()
+    });
+  }
+
+  if (formular.length === 0) {
+    SpreadsheetApp.getUi().alert("Inga formulär hittades i mappen.");
+    return;
+  }
+
+  formular.sort(function (a, b) { return a.namn.localeCompare(b.namn); });
+
+  var rader = formular.map(function (f) {
+    return "<p><a href='" + f.lank + "' target='_blank'>🔗 " + f.namn + "</a></p>";
+  }).join("");
+
+  var html = HtmlService.createHtmlOutput(rader)
+    .setWidth(400)
+    .setHeight(Math.min(500, 80 + formular.length * 40));
+
+  SpreadsheetApp.getUi().showModalDialog(html, "Formulärlänkar (" + formular.length + " st)");
 }
