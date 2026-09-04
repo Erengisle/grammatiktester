@@ -234,7 +234,7 @@ Google Apps Script kan inte automatiskt koppla ett nytt formulär till Master-ka
 ### Rör aldrig RESULTAT_LOGG eller KLASSÖVERSIKT manuellt
 Dessa flikar byggs om av scriptet. Manuella ändringar skrivs över eller kan orsaka fel.
 
-## Flytta Mastern & ta bort elever
+## Flytta Mastern, rensa resultat & börja om
 
 ### Flytta Master-kalkylarket
 
@@ -253,6 +253,18 @@ Det finns ingen inbyggd "ta bort"-funktion i koden – det görs manuellt direkt
 3. Kör `uppdateraKlassoversiktManuellt()` i Apps Script så att **KLASSÖVERSIKT** byggs om direkt. Annars ligger de gamla resultaten kvar där tills nästa elev lämnar in något.
 4. Vill du städa helt: ta även bort elevens rad(er) i respektive formulärs egen svarsflik (t.ex. "Verb 1 (svar)"). De påverkar inget i systemet om de ligger kvar, men kan vara bra att rensa av integritetsskäl.
 
+### Ta bort alla svar (nollställa resultaten)
+
+Vill du rensa alla resultat men behålla eleverna och deras länkar (t.ex. inför en ny termin)?
+
+1. Öppna **RESULTAT_LOGG**-fliken.
+2. Markera alla rader **utom rad 1** (rubrikraden) och ta bort dem.
+3. Kör `uppdateraKlassoversiktManuellt()` så **KLASSÖVERSIKT** byggs om till tom direkt.
+
+> ⚠️ Töm aldrig bara email-kolumnen (B) och låt raderna ligga kvar – då *försvinner* de resultaten spårlöst ur klassöversikten och elevernas resultatsidor, eftersom både `uppdateraKlassoversikt()` och `hamtaElevResultat()` matchar rader mot email. Ta bort hela raderna istället.
+
+Detta rör inte de enskilda formulärens egna svarsflikar (t.ex. "Verb 1 (svar)") – de är Googles råsvar och läses bara en gång vid inlämningstillfället, aldrig igen efteråt.
+
 ### Rensa svarsfliken för ett formulär (t.ex. "Formulärsvar 1")
 
 Varje Google Formulär skriver sina svar till en egen flik i Master-kalkylarket. Du har två sätt att rensa den – välj beroende på om formuläret fortfarande används:
@@ -263,6 +275,17 @@ Varje Google Formulär skriver sina svar till en egen flik i Master-kalkylarket.
 | Ta bort hela fliken | Högerklicka på flikfliken → Ta bort. | Bryter kopplingen mellan formulär och kalkylark. Nya inlämningar loggas ingenstans förrän du länkar om formuläret (fliken Svar → länka till kalkylark igen). |
 
 > 💡 Redan rättade resultat påverkas inte av någotdera – **RESULTAT_LOGG** är en separat, permanent logg som klassöversikten och elevernas resultatsidor läser från. Svarsfliken är bara formulärets råa inkorg och läses aldrig igen efter att en inlämning rättats en gång.
+
+### Börja helt om (t.ex. ny skola eller nya elever)
+
+Vill du nollställa allt – både resultat och elevernas gamla länkar – t.ex. för att gamla eleverna kommer från en annan skola:
+
+1. Ta bort **alla rader** i **Elever**-fliken (utom rubrikraden). De gamla elevernas länkar (tokens) slutar då fungera direkt – webbappen hittar dem inte längre.
+2. Ta bort alla rader i **RESULTAT_LOGG** (utom rubrikraden), som ovan.
+3. Kör `uppdateraKlassoversiktManuellt()` så **KLASSÖVERSIKT** blir tom direkt.
+4. Lägg till dina nya elever i Elever-fliken (Email + Namn, lämna Token tom). De får nya tokens och nya länkar automatiskt vid sin första inlämning, precis som vanligt.
+
+Testregister, facitflikarna och själva formulären påverkas inte – du kan återanvända samma test för de nya eleverna, eller skapa nya, helt oberoende av omstarten.
 
 ## Felsökning
 
