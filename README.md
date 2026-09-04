@@ -253,6 +253,17 @@ Det finns ingen inbyggd "ta bort"-funktion i koden – det görs manuellt direkt
 3. Kör `uppdateraKlassoversiktManuellt()` i Apps Script så att **KLASSÖVERSIKT** byggs om direkt. Annars ligger de gamla resultaten kvar där tills nästa elev lämnar in något.
 4. Vill du städa helt: ta även bort elevens rad(er) i respektive formulärs egen svarsflik (t.ex. "Verb 1 (svar)"). De påverkar inget i systemet om de ligger kvar, men kan vara bra att rensa av integritetsskäl.
 
+### Rensa svarsfliken för ett formulär (t.ex. "Formulärsvar 1")
+
+Varje Google Formulär skriver sina svar till en egen flik i Master-kalkylarket. Du har två sätt att rensa den – välj beroende på om formuläret fortfarande används:
+
+| Metod | Gör så här | Effekt |
+|---|---|---|
+| Tömma raderna | Markera alla datarader **utom rubrikraden** och ta bort dem. Fliken finns kvar. | Alltid säkert. Formuläret är fortsatt kopplat och nya svar läggs till som vanligt. |
+| Ta bort hela fliken | Högerklicka på flikfliken → Ta bort. | Bryter kopplingen mellan formulär och kalkylark. Nya inlämningar loggas ingenstans förrän du länkar om formuläret (fliken Svar → länka till kalkylark igen). |
+
+> 💡 Redan rättade resultat påverkas inte av någotdera – **RESULTAT_LOGG** är en separat, permanent logg som klassöversikten och elevernas resultatsidor läser från. Svarsfliken är bara formulärets råa inkorg och läses aldrig igen efter att en inlämning rättats en gång.
+
 ## Felsökning
 
 | Problem | Trolig orsak | Lösning |
