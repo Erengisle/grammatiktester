@@ -14,7 +14,7 @@
  *   WEBAPP_URL – URL till den publicerade webbappen (Distribuera → Ny distribution)
  */
 
-var WEBAPP_URL = "DIN_WEBAPP_URL_HÄR";
+var WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyLTRPRlnTEWA_lZV6c5znbrEr9vdHmeKUMsCZTNH_yeNdEsauxgycitiCdWEl35LDZPQ/exec";
 
 var FARG_ROD  = "#FF9999";
 var FARG_GUL  = "#FFEB99";
