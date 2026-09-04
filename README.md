@@ -265,6 +265,17 @@ Vill du rensa alla resultat men behålla eleverna och deras länkar (t.ex. infö
 
 Detta rör inte de enskilda formulärens egna svarsflikar (t.ex. "Verb 1 (svar)") – de är Googles råsvar och läses bara en gång vid inlämningstillfället, aldrig igen efteråt.
 
+### Rensa svarsfliken för ett formulär (t.ex. "Formulärsvar 1")
+
+Varje Google Formulär skriver sina svar till en egen flik i Master-kalkylarket. Du har två sätt att rensa den – välj beroende på om formuläret fortfarande används:
+
+| Metod | Gör så här | Effekt |
+|---|---|---|
+| Tömma raderna | Markera alla datarader **utom rubrikraden** och ta bort dem. Fliken finns kvar. | Alltid säkert. Formuläret är fortsatt kopplat och nya svar läggs till som vanligt. |
+| Ta bort hela fliken | Högerklicka på flikfliken → Ta bort. | Bryter kopplingen mellan formulär och kalkylark. Nya inlämningar loggas ingenstans förrän du länkar om formuläret (fliken Svar → länka till kalkylark igen). |
+
+> 💡 Redan rättade resultat påverkas inte av någotdera – **RESULTAT_LOGG** är en separat, permanent logg som klassöversikten och elevernas resultatsidor läser från. Svarsfliken är bara formulärets råa inkorg och läses aldrig igen efter att en inlämning rättats en gång.
+
 ### Börja helt om (t.ex. ny skola eller nya elever)
 
 Vill du nollställa allt – både resultat och elevernas gamla länkar – t.ex. för att gamla eleverna kommer från en annan skola:
