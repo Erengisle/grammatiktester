@@ -4,12 +4,13 @@
  * Kör via menyval: 📝 Formulär → Skapa nytt formulär
  */
 
-var FOLDER_ID = "1RtD6bsSQM7T-8wE8caxTY0QYet6Kxj5F";
+var FOLDER_ID = "1G7pfwIGuEB3SxfaLWSJoghRIw-pYYbSJ";
 
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu("📝 Formulär")
     .addItem("Skapa nytt formulär", "skapaFormular")
+    .addItem("Visa formulärlänkar", "visaFormularlankar")
     .addToUi();
 }
 
@@ -68,4 +69,61 @@ function skapaFormular() {
     .setHeight(150);
 
   SpreadsheetApp.getUi().showModalDialog(html, "Formulär skapat");
+}
+
+// Listar alla formulär i FOLDER_ID (huvudmappen) och dess undermappar (t.ex. en per
+// område), grupperat per undermapp, så man slipper leta i Drive.
+function visaFormularlankar() {
+  var huvudmapp = DriveApp.getFolderById(FOLDER_ID);
+  var grupper = [];
+
+  var toppformular = hamtaFormularILank(huvudmapp);
+  if (toppformular.length > 0) grupper.push({ namn: "", formular: toppformular });
+
+  var undermappar = [];
+  var mappIterator = huvudmapp.getFolders();
+  while (mappIterator.hasNext()) undermappar.push(mappIterator.next());
+  undermappar.sort(function (a, b) { return a.getName().localeCompare(b.getName()); });
+
+  for (var i = 0; i < undermappar.length; i++) {
+    var formular = hamtaFormularILank(undermappar[i]);
+    if (formular.length > 0) grupper.push({ namn: undermappar[i].getName(), formular: formular });
+  }
+
+  var totalt = 0;
+  for (var g = 0; g < grupper.length; g++) totalt += grupper[g].formular.length;
+
+  if (totalt === 0) {
+    SpreadsheetApp.getUi().alert("Inga formulär hittades i mappen.");
+    return;
+  }
+
+  var html = grupper.map(function (grupp) {
+    var rubrik = grupp.namn ? "<p style='margin:14px 0 4px;font-weight:bold;'>" + grupp.namn + "</p>" : "";
+    var rader = grupp.formular.map(function (f) {
+      return "<p style='margin:2px 0;'><a href='" + f.lank + "' target='_blank'>🔗 " + f.namn + "</a></p>";
+    }).join("");
+    return rubrik + rader;
+  }).join("");
+
+  var output = HtmlService.createHtmlOutput(html)
+    .setWidth(420)
+    .setHeight(Math.min(500, 80 + totalt * 32 + grupper.length * 24));
+
+  SpreadsheetApp.getUi().showModalDialog(output, "Formulärlänkar (" + totalt + " st)");
+}
+
+// Hämtar {namn, lank} för alla Google-formulär direkt i en mapp, sorterat på namn.
+function hamtaFormularILank(mapp) {
+  var filer = mapp.getFilesByType(MimeType.GOOGLE_FORMS);
+  var formular = [];
+  while (filer.hasNext()) {
+    var fil = filer.next();
+    formular.push({
+      namn: fil.getName(),
+      lank: FormApp.openById(fil.getId()).getPublishedUrl()
+    });
+  }
+  formular.sort(function (a, b) { return a.namn.localeCompare(b.namn); });
+  return formular;
 }

@@ -488,11 +488,11 @@
   <!-- 4. Script-filerna -->
   <section id="script">
     <h2><span class="icon">⚙️</span> Apps Script-filerna</h2>
-    <p>Scriptkoden finns i fyra filer under <code>gas/</code> i repot. Dessa kopieras in i Google Apps Script som är kopplat till Master-kalkylarket.</p>
+    <p>Scriptkoden finns i fem filer under <code>gas/</code> i repot. Dessa kopieras in i Google Apps Script som är kopplat till Master-kalkylarket.</p>
 
     <div class="card">
       <div class="card-title"><span class="file-badge">formularskapare.js</span> Formulärskapare</div>
-      <p>Skapar ett Google Formulär från fliken "Frågor". Körs manuellt via menyval i kalkylarket: <strong>📝 Formulär → Skapa nytt formulär</strong>. Lägger formuläret i en angiven Google Drive-mapp.</p>
+      <p>Skapar ett Google Formulär från fliken "Frågor". Körs manuellt via menyval i kalkylarket: <strong>📝 Formulär → Skapa nytt formulär</strong>. Lägger formuläret i en angiven Google Drive-mapp. Menyn har även <strong>Visa formulärlänkar</strong>, som listar alla formulär i mappen och dess undermappar (t.ex. en per område) med klickbara länkar, grupperat per undermapp – slipp leta i Drive.</p>
     </div>
     <div class="card">
       <div class="card-title"><span class="file-badge">resultathantering.js</span> Resultathantering</div>
@@ -543,6 +543,7 @@
     <p>Längst upp i <code>formularskapare.gs</code> finns:</p>
     <div class="code-block"><span class="key">var</span> <span class="val">FOLDER_ID</span> = <span class="val">"1RtD6bsSQM7T-8wE8caxTY0QYet6Kxj5F"</span>;</div>
     <p>Byt ut värdet mot ID:t för den Google Drive-mapp där du vill spara dina formulär. Mapp-ID:t hittar du i webbläsarens adressfält när du öppnar mappen i Google Drive (den långa teckensträngen i URL:en).</p>
+    <p>Mappen kan gärna innehålla undermappar, t.ex. en per område ("Verb", "Adjektiv" …) – <strong>Visa formulärlänkar</strong> letar igenom både huvudmappen och alla undermappar en nivå ner.</p>
 
     <h3>Steg 4 – Publicera elevernas webbapp</h3>
     <ol class="steps">
@@ -630,6 +631,11 @@
     <div class="callout tip">
       <span class="callout-icon">💡</span>
       <span>Kontrollera att namnet i Testregister kolumn D stämmer <em>exakt</em> med fliknamnet i kalkylarket – stora/små bokstäver och mellanslag spelar roll.</span>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">🔗</span>
+      <span>Behöver du länken till ett formulär du redan skapat, utan att leta i Drive? Kör <strong>📝 Formulär → Visa formulärlänkar</strong> i kalkylarkets meny – den listar alla formulär i mappen och dess undermappar (grupperat per undermapp, t.ex. per område) med klickbara länkar.</span>
     </div>
   </section>
 
