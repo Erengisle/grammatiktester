@@ -78,9 +78,9 @@ Allt samlas i ett Google Kalkylark som kallas **Master**. Det ska innehålla fö
 | Flik | Kolumner | Syfte |
 |---|---|---|
 | Testregister | `A: TestID` `B: Område` `C: Facitflik` `D: Svarssheet` | En rad per test. Scriptet slår upp vilket facit och vilken svarssheet som hör till varje formulär. |
-| Elever | `A: Email` `B: Namn` `C: Token` | En rad per elev. Token fylls i automatiskt första gången eleven lämnar in. Rad 1 = rubrikrad. |
+| Elever | `A: Email` `B: Namn` `C: Token` `D: Klass` (valfri) | En rad per elev. Token fylls i automatiskt första gången eleven lämnar in. Rad 1 = rubrikrad. Fyll i kolumn D om du vill ha en egen klassöversiktsflik för eleven. |
 | RESULTAT_LOGG | `A: Tidsstämpel` `B: Email` `C: TestID` `D: Område` `E: Procent` `F: Rätta` `G: Totalt` | En rad per inlämning. Byggs på automatiskt. Redigera aldrig manuellt. |
-| KLASSÖVERSIKT | Byggs om automatiskt | Namn + upp till 10 individuella testresultat och ett medelvärde per område per elev, färgkodat. Byggs om helt från RESULTAT_LOGG vid varje inlämning – redigera aldrig manuellt. |
+| KLASSÖVERSIKT<br>+ en flik per klass | Byggs om automatiskt | Namn + upp till 10 individuella testresultat och ett medelvärde per område per elev, färgkodat. **KLASSÖVERSIKT** visar alla elever blandat; dessutom skapas en egen flik per klass (t.ex. `KLASSÖVERSIKT 9A`) för elever som har ett värde i Elever kolumn D. Byggs om helt från RESULTAT_LOGG vid varje inlämning – redigera aldrig manuellt. |
 | FACIT_V01, FACIT_V02 … | `A: Frågenummer` `B: Rätt svar` | En facitflik per test. Ingen rubrikrad. Svaren ska stämma exakt med elevernas svar (gemener/versaler spelar ingen roll). |
 | Frågor | `A: Frågetext` (endast rad 2 och nedåt) — `B+ rad 1`: svarsalternativ vid flerval | Fyll i frågorna här innan du skapar ett formulär. Används av formulärskaparen. **Rad 1 är alltid reserverad** och läses aldrig som fråga. |
 
@@ -188,8 +188,11 @@ Elever läggs till i **Elever**-fliken innan de börjar skicka in svar.
 | A – Email | Elevens e-postadress | Måste stämma exakt med den adress eleven använder i formuläret. Gemener rekommenderas. |
 | B – Namn | Elevens fullständiga namn | Visas i välkomstmejlet och på resultatsidan. |
 | C – Token | Lämnas tom | Fylls i automatiskt vid elevens första inlämning. Rör den inte. |
+| D – Klass | Valfritt, t.ex. `9A` | Om ifylld skapas en egen klassöversiktsflik för eleven (t.ex. `KLASSÖVERSIKT 9A`), utöver **KLASSÖVERSIKT** som alltid visar alla elever blandat. Lämna tom om du bara har en grupp. |
 
 > ℹ️ Om en elev inte finns i listan när hen skickar in loggas inget resultat och inget välkomstmejl skickas. Lägg alltid till elever *innan* testet.
+
+> 🏫 Har du flera klasser? Klistra in alla elever i samma **Elever**-flik och fyll i kolumn D med klassnamn – du behöver bara en flik att hålla reda på istället för en per klass. Klassöversikterna byggs ändå upp separat automatiskt.
 
 ## Webbapparna
 

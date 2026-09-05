@@ -5,10 +5,12 @@
  *
  * Flikar i kalkylarket:
  *   Testregister  – A: TestID, B: Område, C: Facitflik, D: Svarssheet
- *   Elever        – A: Email, B: Namn, C: Token (unik länknyckel)
+ *   Elever        – A: Email, B: Namn, C: Token (unik länknyckel), D: Klass (valfri)
  *   RESULTAT_LOGG – A: Tidsstämpel, B: Email, C: TestID, D: Område,
  *                   E: Procent, F: Rätta, G: Totalt
- *   KLASSÖVERSIKT – A: Namn, B+: ett område per kolumn (rubrik i rad 1)
+ *   KLASSÖVERSIKT – A: Namn, B+: ett område per kolumn (rubrik i rad 1). Visar alla
+ *                   elever blandat. Plus en egen flik per klass, "KLASSÖVERSIKT <klass>",
+ *                   för elever som har ett värde i Elever kolumn D.
  *
  * Konstant att fylla i:
  *   WEBAPP_URL – URL till den publicerade webbappen (Distribuera → Ny distribution)
@@ -300,9 +302,6 @@ function skickaOmLankar() {
 // ---------------------------------------------------------------------------
 
 function uppdateraKlassoversikt(ss) {
-  var oversikt = ss.getSheetByName("KLASSÖVERSIKT");
-  if (!oversikt) oversikt = ss.insertSheet("KLASSÖVERSIKT");
-
   var MAX_TESTER = 10;
 
   var elever = ss.getSheetByName("Elever").getDataRange().getValues();
@@ -334,11 +333,38 @@ function uppdateraKlassoversikt(ss) {
     rubrik.push(om + " medel");
   }
 
+  // Alla elever blandat, oavsett klass
+  skrivKlassoversiktFlik(ss, "KLASSÖVERSIKT", elever.slice(1), basta, omradenOrdning, rubrik, MAX_TESTER);
+
+  // En flik per klass (Elever kolumn D). Elever utan klass ingår bara i "alla blandat"-fliken.
+  var klassGrupper = {};
+  var klassOrdning = [];
+  for (var i = 1; i < elever.length; i++) {
+    var klass = elever[i][3] ? elever[i][3].toString().trim() : "";
+    if (!klass) continue;
+    if (!klassGrupper[klass]) { klassGrupper[klass] = []; klassOrdning.push(klass); }
+    klassGrupper[klass].push(elever[i]);
+  }
+  klassOrdning.sort();
+
+  for (var k = 0; k < klassOrdning.length; k++) {
+    var klass    = klassOrdning[k];
+    var flikNamn = sanitizeFlikNamn("KLASSÖVERSIKT " + klass);
+    skrivKlassoversiktFlik(ss, flikNamn, klassGrupper[klass], basta, omradenOrdning, rubrik, MAX_TESTER);
+  }
+}
+
+// Bygger/skriver om en klassöversiktsflik för en given uppsättning elevrader
+// (rader från Elever-fliken, utan rubrikraden).
+function skrivKlassoversiktFlik(ss, flikNamn, elevRader, basta, omradenOrdning, rubrik, MAX_TESTER) {
+  var oversikt = ss.getSheetByName(flikNamn);
+  if (!oversikt) oversikt = ss.insertSheet(flikNamn);
+
   var rader = [rubrik];
 
-  for (var i = 1; i < elever.length; i++) {
-    var email = elever[i][0] ? elever[i][0].toString().toLowerCase().trim() : "";
-    var namn  = elever[i][1] ? elever[i][1].toString() : "";
+  for (var i = 0; i < elevRader.length; i++) {
+    var email = elevRader[i][0] ? elevRader[i][0].toString().toLowerCase().trim() : "";
+    var namn  = elevRader[i][1] ? elevRader[i][1].toString() : "";
     if (!email || !namn) continue;
 
     var elevData = basta[email] || {};
@@ -394,6 +420,11 @@ function uppdateraKlassoversikt(ss) {
   }
 }
 
+// Google Sheets tillåter inte : \ / ? * [ ] i fliknamn.
+function sanitizeFlikNamn(namn) {
+  return namn.replace(/[:\\\/\?\*\[\]]/g, "_").substring(0, 100);
+}
+
 // ---------------------------------------------------------------------------
 // Färgkodning
 // ---------------------------------------------------------------------------
@@ -404,7 +435,7 @@ function beraknaFarg(procent) {
   return FARG_GRON;
 }
 
-// Kör den här för att uppdatera KLASSÖVERSIKT-fliken manuellt
+// Kör den här för att uppdatera KLASSÖVERSIKT och alla klassflikar manuellt
 function uppdateraKlassoversiktManuellt() {
   uppdateraKlassoversikt(SpreadsheetApp.getActiveSpreadsheet());
 }

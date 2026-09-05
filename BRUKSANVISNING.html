@@ -447,8 +447,8 @@
           </tr>
           <tr>
             <td>Elever</td>
-            <td><code>A: Email</code> <code>B: Namn</code> <code>C: Token</code></td>
-            <td>En rad per elev. Token fylls i automatiskt första gången eleven lämnar in. Rad 1 = rubrikrad.</td>
+            <td><code>A: Email</code> <code>B: Namn</code> <code>C: Token</code> <code>D: Klass</code> (valfri)</td>
+            <td>En rad per elev. Token fylls i automatiskt första gången eleven lämnar in. Rad 1 = rubrikrad. Fyll i kolumn D om du vill ha en egen klassöversiktsflik för eleven.</td>
           </tr>
           <tr>
             <td>RESULTAT_LOGG</td>
@@ -456,9 +456,9 @@
             <td>En rad per inlämning. Byggs på automatiskt. Redigera aldrig manuellt.</td>
           </tr>
           <tr>
-            <td>KLASSÖVERSIKT</td>
+            <td>KLASSÖVERSIKT<br><small>+ en flik per klass</small></td>
             <td>Byggs om automatiskt</td>
-            <td>Namn + upp till 10 individuella testresultat och ett medelvärde per område per elev, färgkodat. Byggs om helt från RESULTAT_LOGG vid varje inlämning – redigera aldrig manuellt.</td>
+            <td>Namn + upp till 10 individuella testresultat och ett medelvärde per område per elev, färgkodat. <strong>KLASSÖVERSIKT</strong> visar alla elever blandat; dessutom skapas en egen flik per klass (t.ex. <code>KLASSÖVERSIKT 9A</code>) för elever som har ett värde i Elever kolumn D. Byggs om helt från RESULTAT_LOGG vid varje inlämning – redigera aldrig manuellt.</td>
           </tr>
           <tr>
             <td>FACIT_V01, FACIT_V02 …</td>
@@ -645,6 +645,7 @@
           <tr><td>A – Email</td><td>Elevens e-postadress</td><td>Måste stämma exakt med den adress eleven använder i formuläret. Gemener rekommenderas.</td></tr>
           <tr><td>B – Namn</td><td>Elevens fullständiga namn</td><td>Visas i välkomstmejlet och på resultatsidan.</td></tr>
           <tr><td>C – Token</td><td>Lämnas tom</td><td>Fylls i automatiskt vid elevens första inlämning. Rör den inte.</td></tr>
+          <tr><td>D – Klass</td><td>Valfritt, t.ex. <code>9A</code></td><td>Om ifylld skapas en egen klassöversiktsflik för eleven (t.ex. <code>KLASSÖVERSIKT 9A</code>), utöver <strong>KLASSÖVERSIKT</strong> som alltid visar alla elever blandat. Lämna tom om du bara har en grupp.</td></tr>
         </tbody>
       </table>
     </div>
@@ -652,6 +653,11 @@
     <div class="callout info">
       <span class="callout-icon">ℹ️</span>
       <span>Om en elev inte finns i listan när hen skickar in loggas inget resultat och inget välkomstmejl skickas. Lägg alltid till elever <em>innan</em> testet.</span>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">🏫</span>
+      <span>Har du flera klasser? Klistra in alla elever i samma <strong>Elever</strong>-flik och fyll i kolumn D med klassnamn – du behöver bara en flik att hålla reda på istället för en per klass. Klassöversikterna byggs ändå upp separat automatiskt.</span>
     </div>
   </section>
 
