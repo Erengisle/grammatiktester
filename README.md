@@ -92,7 +92,7 @@ Allt samlas i ett Google Kalkylark som kallas **Master**. Det ska innehålla fö
 
 Scriptkoden finns i fem filer under `gas/` i repot. Dessa kopieras in i Google Apps Script som är kopplat till Master-kalkylarket.
 
-- **`formularskapare.js`** – Formulärskapare. Skapar ett Google Formulär från fliken "Frågor". Körs manuellt via menyval i kalkylarket: **📝 Formulär → Skapa nytt formulär**. Lägger formuläret i en angiven Google Drive-mapp. Menyn har även **Visa formulärlänkar**, som listar alla formulär i mappen med klickbara länkar – slipp leta i Drive.
+- **`formularskapare.js`** – Formulärskapare. Skapar ett Google Formulär från fliken "Frågor". Körs manuellt via menyval i kalkylarket: **📝 Formulär → Skapa nytt formulär**. Lägger formuläret i en angiven Google Drive-mapp. Menyn har även **Visa formulärlänkar**, som listar alla formulär i mappen och dess undermappar (t.ex. en per område) med klickbara länkar, grupperat per undermapp – slipp leta i Drive.
 - **`resultathantering.js`** – Resultathantering. Triggas automatiskt när en elev skickar in ett formulär. Rättar svaren mot facit, loggar resultatet, uppdaterar klassöversikten och skickar välkomstmejl med länk första gången.
 - **`webbapp.js`** – Webbapp. Hanterar anrop till webbappen. Visar elevens resultatsida (`?token=…`) eller klassöversikten (`?view=klass`) beroende på URL-parametrar.
 - **`webbapp1.html`** – Elevens resultatsida. HTML-mallen för elevens personliga resultatsida. Dashboard-layout med statistikkort, matristabell och sparklines.
@@ -124,6 +124,8 @@ var FOLDER_ID = "1RtD6bsSQM7T-8wE8caxTY0QYet6Kxj5F";
 ```
 
 Byt ut värdet mot ID:t för den Google Drive-mapp där du vill spara dina formulär. Mapp-ID:t hittar du i webbläsarens adressfält när du öppnar mappen i Google Drive (den långa teckensträngen i URL:en).
+
+Mappen kan gärna innehålla undermappar, t.ex. en per område ("Verb", "Adjektiv" …) – **Visa formulärlänkar** letar igenom både huvudmappen och alla undermappar en nivå ner.
 
 ### Steg 4 – Publicera elevernas webbapp
 1. I Apps Script: klicka på **Distribuera → Ny distribution**.
@@ -179,7 +181,7 @@ Byt ut värdet mot ID:t för den Google Drive-mapp där du vill spara dina formu
 
 > 💡 Kontrollera att namnet i Testregister kolumn D stämmer *exakt* med fliknamnet i kalkylarket – stora/små bokstäver och mellanslag spelar roll.
 
-> 🔗 Behöver du länken till ett formulär du redan skapat, utan att leta i Drive? Kör **📝 Formulär → Visa formulärlänkar** i kalkylarkets meny – den listar alla formulär i mappen med klickbara länkar.
+> 🔗 Behöver du länken till ett formulär du redan skapat, utan att leta i Drive? Kör **📝 Formulär → Visa formulärlänkar** i kalkylarkets meny – den listar alla formulär i mappen och dess undermappar (grupperat per undermapp, t.ex. per område) med klickbara länkar.
 
 ## Lägga till elever
 
